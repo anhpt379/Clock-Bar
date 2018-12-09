@@ -2,8 +2,8 @@
 
 @interface ViewController : NSViewController
 
-@property (weak) IBOutlet NSButton *autoLoginState;
-@property (weak) IBOutlet NSButton *showInMenuBarState;
+@property (nonatomic, weak) IBOutlet NSButton *autoLoginState;
+@property (nonatomic, weak) IBOutlet NSButton *showInMenuBarState;
 
 
 

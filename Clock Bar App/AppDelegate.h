@@ -1,15 +1,15 @@
-#import <Cocoa/Cocoa.h>
+@import Cocoa;
 
 @interface AppDelegate : NSObject <NSApplicationDelegate>
 
-@property (weak) IBOutlet NSMenu *statusMenu;
+@property (nonatomic, weak) IBOutlet NSMenu *statusMenu;
 @property (strong, nonatomic) NSStatusItem *statusBar;
 
 - (IBAction)prefsMenuItemAction:(id)sender;
 
 - (IBAction)quitMenuItemAction:(id)sender;
 
-@property (weak) IBOutlet NSMenuItem *muteMenuItem;
+@property (nonatomic, weak) IBOutlet NSMenuItem *muteMenuItem;
 
 - (void) hideMenuBar:(BOOL)enableState;
 - (void) changeColor:(id)sender;

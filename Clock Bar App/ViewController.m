@@ -1,11 +1,6 @@
 #import "ViewController.h"
 #import "AppDelegate.h"
-#include <ServiceManagement/SMLoginItem.h>
-
-
-static NSString *const MASCustomShortcutKey = @"customShortcut";
-
-static void *MASObservingContext = &MASObservingContext;
+@import ServiceManagement;
 
 @implementation ViewController
 
@@ -18,20 +13,18 @@ static void *MASObservingContext = &MASObservingContext;
         [[NSUserDefaults standardUserDefaults] synchronize];
     }
         
-    BOOL state = [[NSUserDefaults standardUserDefaults] boolForKey:@"auto_login"];
+    const BOOL state = [[NSUserDefaults standardUserDefaults] boolForKey:@"auto_login"];
     [self.autoLoginState setState: !state];
     
     BOOL hideStatusBarState = [[NSUserDefaults standardUserDefaults] boolForKey:@"hide_status_bar"];
-    [self.showInMenuBarState setState: hideStatusBarState];
-    
-    NSLog(@"View Load");
+    [self.showInMenuBarState setState:hideStatusBarState];
 }
 
--(void)viewDidAppear {
+- (void)viewDidAppear {
     [super viewDidAppear];
+    
     [[self.view window] setTitle:@"Clock Bar"];
     [[self.view window] center];
-    
 }
 
 
@@ -46,13 +39,13 @@ static void *MASObservingContext = &MASObservingContext;
 }
 
 - (IBAction)onLoginStartChanged:(id)sender {
-    NSLog(@"Login start changed");
+//    NSLog(@"Login start changed");
     NSInteger state = [self.autoLoginState state];
     BOOL enableState = NO;
-    if(state == NSOnState) {
+    if (state == NSOnState) {
         enableState = YES;
     }
-    if(SMLoginItemSetEnabled((__bridge CFStringRef)@"Nihalsharma.Clock-Launcher", enableState)) {
+    if (SMLoginItemSetEnabled((__bridge CFStringRef)@"info.averello.Clock-Launcher", (Boolean)enableState)) {
         [[NSUserDefaults standardUserDefaults] setBool:!enableState forKey:@"auto_login"];
     }
 }
@@ -62,7 +55,7 @@ static void *MASObservingContext = &MASObservingContext;
     NSInteger state = [self.showInMenuBarState state];
 
     BOOL enableState = NO;
-    if(state == NSOnState) {
+    if (state == NSOnState) {
         enableState = YES;
     }
 
@@ -72,9 +65,7 @@ static void *MASObservingContext = &MASObservingContext;
     AppDelegate *appDelegate = (AppDelegate *) [[NSApplication sharedApplication] delegate];
     [appDelegate hideMenuBar:enableState];
 
-    
     if (enableState == YES) {
-    
         NSString *msgText = @"Long press on the Touch Bar Clock Button to show Preferences when the Menu Item is disabled.";
         
         NSAlert* msgBox = [[NSAlert alloc] init] ;
@@ -84,7 +75,6 @@ static void *MASObservingContext = &MASObservingContext;
     }
     
 }
-
 
 - (IBAction)whiteButtonClicked:(id)sender {
     AppDelegate *appDelegate = (AppDelegate *) [[NSApplication sharedApplication] delegate];
@@ -131,8 +121,5 @@ static void *MASObservingContext = &MASObservingContext;
     
     [appDelegate changeColor:color];
 }
-
-
-
 
 @end

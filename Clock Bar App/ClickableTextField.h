@@ -6,7 +6,7 @@
 //  Copyright © 2018 Nihalsharma. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
+@import Cocoa;
 
 @interface ClickableTextField : NSTextField
 @end

@@ -14,8 +14,7 @@
 
 @implementation ClickableTextField
 
-- (void)mouseDown:(NSEvent *)theEvent
-{
+- (void)mouseDown:(NSEvent *)theEvent {
     [self sendAction:[self action] to:[self target]];
 }
 

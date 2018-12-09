@@ -1,33 +1,119 @@
+@import Cocoa;
+@import ServiceManagement;
 #import "AppDelegate.h"
 #import "TouchBar.h"
-#import <ServiceManagement/ServiceManagement.h>
-#import "TouchButton.h"
 #import "TouchDelegate.h"
-#import <Cocoa/Cocoa.h>
 
-static const NSTouchBarItemIdentifier muteIdentifier = @"ns.clock";
-static NSString *const MASCustomShortcutKey = @"customShortcut";
+static const NSTouchBarItemIdentifier kMuteIdentifier = @"ns.clock";
 
 @interface AppDelegate () <TouchDelegate>
+
+@property (nonatomic, strong) NSTextField *label;
+
+@property (nonatomic, strong) NSDateFormatter *timeformatter;
+@property (nonatomic, strong) NSString *format;
+
+@property (nonatomic, strong) dispatch_block_t update;
 
 @end
 
 @implementation AppDelegate
 
-NSButton *touchBarButton;
-
 @synthesize statusBar;
 
-TouchButton *button;
+- (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
+    [[[[NSApplication sharedApplication] windows] lastObject] close];
+    
+    DFRSystemModalShowsCloseBoxWhenFrontMost(YES);
+    
+    _timeformatter = [[NSDateFormatter alloc] init];
+    _timeformatter.timeStyle = NSDateFormatterShortStyle;
+    _timeformatter.dateFormat = _format;
+    
+    NSDate *const now = [NSDate date];
+    NSString *const newDateString = [_timeformatter stringFromDate:now];
+    
+    NSClickGestureRecognizer *const press =
+    [[NSClickGestureRecognizer alloc] initWithTarget:self
+                                              action:@selector(onPressed:)];
+    press.buttonMask = 0x1;
+    press.allowedTouchTypes = NSTouchTypeMaskDirect;
+    press.numberOfTouchesRequired = 1;
+    
+    NSPressGestureRecognizer *const longPress =
+    [[NSPressGestureRecognizer alloc] initWithTarget:self
+                                              action:@selector(onLongPressed:)];
+    longPress.buttonMask = 0x1;
+    longPress.allowedTouchTypes = NSTouchTypeMaskDirect;
+    longPress.minimumPressDuration = 0.5;
+    longPress.numberOfTouchesRequired = 1;
+    
+    NSFont *systemFont = [NSFont systemFontOfSize:14.0f];
+    NSDictionary * fontAttributes =
+    [[NSDictionary alloc] initWithObjectsAndKeys:systemFont, NSFontAttributeName, nil];
+    
+    NSMutableAttributedString *attributedTitle =
+    [[NSMutableAttributedString alloc] initWithString:newDateString
+                                           attributes:fontAttributes];
+    
+    NSString *const colorString = [[NSUserDefaults standardUserDefaults] objectForKey:@"clock_color"];
+    NSColor *color = nil;
+    if (colorString == nil){
+        color = [NSColor whiteColor];
+    }
+    else {
+        color = [self colorForString:colorString];
+    }
+    
+    [attributedTitle addAttribute:NSForegroundColorAttributeName
+                            value:color
+                            range:NSMakeRange(0, newDateString.length)];
+    _label = [NSTextField labelWithAttributedString:attributedTitle];
+    _label.bezeled = NO;
+    _label.drawsBackground = NO;
+    _label.editable = NO;
+    _label.selectable = NO;
+    _label.enabled = YES;
+    _label.allowsEditingTextAttributes = NO;
+    _label.allowsExpansionToolTips = NO;
+    _label.allowsCharacterPickerTouchBarItem = NO;
+    _label.allowsDefaultTighteningForTruncation = NO;
+    _label.maximumNumberOfLines = 1;
+    _label.usesSingleLineMode = YES;
+    
+    _label.allowedTouchTypes = NSTouchTypeMaskDirect;
+    _label.alignment = NSTextAlignmentCenter;
+    
+    _label.backgroundColor = NSColor.clearColor;
+    [_label addGestureRecognizer:press];
+    [_label addGestureRecognizer:longPress];
+    
+    
+    NSCustomTouchBarItem *time = [[NSCustomTouchBarItem alloc] initWithIdentifier:kMuteIdentifier];
+    NSView *const container = [[NSView alloc] initWithFrame:NSZeroRect];
+    [container addSubview:_label];
+    [_label sizeToFit];
+    _label.translatesAutoresizingMaskIntoConstraints = NO;
+    [NSLayoutConstraint activateConstraints:@[
+    [_label.centerXAnchor constraintEqualToAnchor:container.centerXAnchor],
+    [_label.centerYAnchor constraintEqualToAnchor:container.centerYAnchor]]];
+    time.view = container;
+    
+    
+    [NSTouchBarItem addSystemTrayItem:time];
+    DFRElementSetControlStripPresenceForIdentifier(kMuteIdentifier, YES);
+    
+    [self enableLoginAutostart];
+    
+    [self updateTime];
+}
 
-NSString *STATUS_ICON_BLACK = @"clock-64";
-
-NSDateFormatter *timeformatter;
-NSString *format = @"hh:mm";
-NSMutableAttributedString *colorTitle;
-
-
-- (void) awakeFromNib {
+- (void)awakeFromNib {
+    
+    _format = @"HH:mm";
+    if ([[NSUserDefaults standardUserDefaults] objectForKey:@"clock_format"] != nil) {
+        _format = [[NSUserDefaults standardUserDefaults] stringForKey:@"clock_format"];
+    }
     
     BOOL hideStatusBar = NO;
     BOOL statusBarButtonToggle = NO;
@@ -53,18 +139,19 @@ NSMutableAttributedString *colorTitle;
         [self setupStatusBarItem];
     }
     
+    [super awakeFromNib];
+    
 }
 
-- (void) setupStatusBarItem {
+- (void)setupStatusBarItem {
     
     self.statusBar = [[NSStatusBar systemStatusBar] statusItemWithLength:NSSquareStatusItemLength];
     self.statusBar.menu = self.statusMenu;
     
-    NSImage* statusImage = [self getStatusBarImage];
+    NSImage *statusImage = [self statusBarImage];
     
     statusImage.size = NSMakeSize(18, 18);
-    
-    [statusImage setTemplate:YES];
+    statusImage.template = YES;
     
     self.statusBar.image = statusImage;
     self.statusBar.highlightMode = YES;
@@ -72,138 +159,91 @@ NSMutableAttributedString *colorTitle;
 }
 
 
-- (void) hideMenuBar: (BOOL) enableState {
-    
+- (void)hideMenuBar:(BOOL)enableState {
     if (!enableState) {
         [self setupStatusBarItem];
-    } else {
+    }
+    else {
         self.statusBar = nil;
     }
 }
 
 
--(void)changeColor:(id)sender
-{
-    
-    [colorTitle addAttribute:NSForegroundColorAttributeName value:sender range:NSMakeRange(0, button.title.length)];
-    [button setAttributedTitle:colorTitle];
+- (void)changeColor:(NSColor *)color {
+    NSMutableAttributedString *const title = _label.attributedStringValue.mutableCopy;
+    [title addAttribute:NSForegroundColorAttributeName
+                  value:color
+                  range:NSMakeRange(0, title.length)];
+    _label.attributedStringValue = title;
 }
 
--(void)UpdateTime:(id)sender
-{
-    NSString *time  = [timeformatter stringFromDate:[NSDate date]];
-    [colorTitle.mutableString setString:time];
-    [button setAttributedTitle:colorTitle];
-}
-
-- (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
-    [[[[NSApplication sharedApplication] windows] lastObject] close];
-
-    DFRSystemModalShowsCloseBoxWhenFrontMost(YES);
-    
-    timeformatter = [[NSDateFormatter alloc] init];
-    [timeformatter setTimeStyle: NSDateFormatterShortStyle];
-    [timeformatter setDateFormat:format];
-    
-    NSDate *now = [NSDate date];
-    NSString *newDateString = [timeformatter stringFromDate:now];
-    
-    
-    button = [TouchButton buttonWithTitle:newDateString target:nil action:nil];
-    [button setDelegate: self];
-    
-    NSFont *systemFont = [NSFont systemFontOfSize:14.0f];
-    NSDictionary * fontAttributes = [[NSDictionary alloc] initWithObjectsAndKeys:systemFont, NSFontAttributeName, nil];
-
-    colorTitle = [[NSMutableAttributedString alloc] initWithString:[button title] attributes:fontAttributes];
-    
-    NSString *colorString = [[NSUserDefaults standardUserDefaults] objectForKey:@"clock_color"];
-    NSColor *color = nil;
-    if (colorString == nil){
-        color = [NSColor whiteColor];
-    } else{
-        color = [self getColorForString:colorString];
+- (void)updateTime {
+    if (_update != nil) {
+        dispatch_block_cancel(_update);
     }
+    NSDate *const now = [NSDate date];
+    NSString *const time = [_timeformatter stringFromDate:now];
+    NSMutableAttributedString *const title = _label.attributedStringValue.mutableCopy;
+    title.mutableString.string = time;
+    _label.attributedStringValue = title;
     
-    [colorTitle addAttribute:NSForegroundColorAttributeName value:color range:NSMakeRange(0, button.title.length)];
-    [button setAttributedTitle:colorTitle];
-    
-    
-    NSCustomTouchBarItem *time = [[NSCustomTouchBarItem alloc] initWithIdentifier:muteIdentifier];
-    time.view = button;
-    [NSTouchBarItem addSystemTrayItem:time];
-    [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(UpdateTime:) userInfo:nil repeats:YES];
-
-    touchBarButton = button;
-
-    [NSTouchBarItem addSystemTrayItem:time];
-    DFRElementSetControlStripPresenceForIdentifier(muteIdentifier, YES);
-
-    [self enableLoginAutostart];
-    
+    // schedule efficient update
+    NSCalendar *const calendar = [NSCalendar currentCalendar];
+    NSDateComponents *const dateComponents = [calendar components:NSCalendarUnitHour
+                                                         fromDate:now];
+    const NSTimeInterval delay = 60 - dateComponents.minute;
+    __weak AppDelegate *welf = self;
+    _update = dispatch_block_create(DISPATCH_BLOCK_ASSIGN_CURRENT, ^{
+        __strong AppDelegate *strelf = welf;
+        if (strelf == nil) { return; }
+        [strelf updateTime];
+    });
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)),
+                   dispatch_get_main_queue(),
+                   _update);
 }
 
--(NSColor*)getColorForString:(id)sender{
+
+- (NSColor *)colorForString:(NSString *)sender{
     return [self colorWithHexColorString:sender];
 }
 
 
-- (NSImage*) getStatusBarImage {
-
-    return [NSImage imageNamed:STATUS_ICON_BLACK];
+- (NSImage *)statusBarImage {
+    return [NSImage imageNamed:@"clock-64"];
 }
 
 
--(void) enableLoginAutostart {
+- (void)enableLoginAutostart {
     if ([[NSUserDefaults standardUserDefaults] objectForKey:@"auto_login"] == nil) {
         return;
     }
-
-    BOOL state = [[NSUserDefaults standardUserDefaults] boolForKey:@"auto_login"];
-    if(!SMLoginItemSetEnabled((__bridge CFStringRef)@"Nihalsharma.Clock-Launcher", !state)) {
-        NSLog(@"The login was not succesfull");
+    
+    const BOOL state = [[NSUserDefaults standardUserDefaults] boolForKey:@"auto_login"];
+    if (!SMLoginItemSetEnabled((__bridge CFStringRef)@"info.averello.Clock-Launcher", !state)) {
+//        NSLog(@"The login was not succesfull");
     }
 }
 
-- (void)applicationWillTerminate:(NSNotification *)aNotification {
-}
-
--(double) changeState {
-    return 0;
-}
-
--(double) changeStateFixed {
-    return 0;
-}
-
--(NSColor *)colorState:(double)volume {
-
-    if(!volume) {
-        return NSColor.redColor;
+- (void)onPressed:(NSButton *)sender {
+    if ([_format isEqual:@"hh:mm"]){
+        _format = @"HH:mm";
     } else {
-        return NSColor.clearColor;
+        _format = @"hh:mm";
     }
+    _timeformatter.dateFormat = _format;
+    [self updateTime];
+    [NSUserDefaults.standardUserDefaults setObject:_format
+                                            forKey:@"clock_format"];
 }
 
-- (void)onPressed:(TouchButton*)sender
-{
-    NSLog(@"On Press clicked");
-    if ([format isEqual:@"hh:mm"]){
-        format = @"HH:mm";
-    } else {
-        format = @"hh:mm";
-    }
-    [timeformatter setDateFormat:format];
-}
-
-- (void)onLongPressed:(TouchButton*)sender
-{
+- (void)onLongPressed:(NSPressGestureRecognizer *)recognizer {
+    if (recognizer.state != NSGestureRecognizerStateBegan) { return; }
     [[[[NSApplication sharedApplication] windows] lastObject] makeKeyAndOrderFront:nil];
-    [[NSApplication sharedApplication] activateIgnoringOtherApps:true];
+    [[NSApplication sharedApplication] activateIgnoringOtherApps:YES];
 }
 
 - (IBAction)prefsMenuItemAction:(id)sender {
-
     [self onLongPressed:sender];
 }
 
@@ -211,8 +251,7 @@ NSMutableAttributedString *colorTitle;
     [NSApp terminate:nil];
 }
 
-- (NSColor*)colorWithHexColorString:(NSString*)inColorString
-{
+- (NSColor*)colorWithHexColorString:(NSString*)inColorString {
     NSColor* result = nil;
     unsigned colorCode = 0;
     unsigned char redByte, greenByte, blueByte;
@@ -233,7 +272,5 @@ NSMutableAttributedString *colorTitle;
               alpha:1.0];
     return result;
 }
-
-
 
 @end

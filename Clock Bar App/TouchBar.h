@@ -1,4 +1,4 @@
-#import <AppKit/AppKit.h>
+@import AppKit;
 
 extern void DFRElementSetControlStripPresenceForIdentifier(NSString *, BOOL);
 extern void DFRSystemModalShowsCloseBoxWhenFrontMost(BOOL);
