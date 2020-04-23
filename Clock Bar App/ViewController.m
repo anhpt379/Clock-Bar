@@ -8,9 +8,7 @@
     [super viewDidLoad];
     
     if ([[NSUserDefaults standardUserDefaults] objectForKey:@"auto_login"] == nil) {
-    
         [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"auto_login"];
-        [[NSUserDefaults standardUserDefaults] synchronize];
     }
         
     const BOOL state = [[NSUserDefaults standardUserDefaults] boolForKey:@"auto_login"];
@@ -18,6 +16,9 @@
     
     BOOL hideStatusBarState = [[NSUserDefaults standardUserDefaults] boolForKey:@"hide_status_bar"];
     [self.showInMenuBarState setState:hideStatusBarState];
+    
+    BOOL showSecondHandState = [[NSUserDefaults standardUserDefaults] boolForKey:@"show_second_hand"];
+    [self.showSecondHandState setState:showSecondHandState];
 }
 
 - (void)viewDidAppear {
@@ -39,87 +40,32 @@
 }
 
 - (IBAction)onLoginStartChanged:(id)sender {
-//    NSLog(@"Login start changed");
-    NSInteger state = [self.autoLoginState state];
-    BOOL enableState = NO;
-    if (state == NSOnState) {
-        enableState = YES;
-    }
+    bool enableState = [self.autoLoginState state] == NSOnState;
+    
     if (SMLoginItemSetEnabled((__bridge CFStringRef)@"info.averello.Clock-Launcher", (Boolean)enableState)) {
         [[NSUserDefaults standardUserDefaults] setBool:!enableState forKey:@"auto_login"];
     }
 }
 
 - (IBAction)showMenuBarChanged:(id)sender {
-
-    NSInteger state = [self.showInMenuBarState state];
-
-    BOOL enableState = NO;
-    if (state == NSOnState) {
-        enableState = YES;
-    }
-
+    bool enableState = [self.showInMenuBarState state] == NSOnState;
     [[NSUserDefaults standardUserDefaults] setBool:enableState forKey:@"hide_status_bar"];
-    [[NSUserDefaults standardUserDefaults] synchronize];
-    
     AppDelegate *appDelegate = (AppDelegate *) [[NSApplication sharedApplication] delegate];
     [appDelegate hideMenuBar:enableState];
 
     if (enableState == YES) {
-        NSString *msgText = @"Long press on the Touch Bar Clock Button to show Preferences when the Menu Item is disabled.";
-        
         NSAlert* msgBox = [[NSAlert alloc] init] ;
-        [msgBox setMessageText:msgText];
+        [msgBox setMessageText:@"Long press on the Touch Bar Clock Button to show Preferences when the Menu Item is disabled."];
         [msgBox addButtonWithTitle: @"OK"];
         [msgBox runModal];
     }
-    
 }
 
-- (IBAction)whiteButtonClicked:(id)sender {
+- (IBAction)showSecondHandChanged:(id)sender {
+    BOOL enableState = [self.showSecondHandState state] == NSOnState;
+    [[NSUserDefaults standardUserDefaults] setBool:enableState forKey:@"show_second_hand"];
     AppDelegate *appDelegate = (AppDelegate *) [[NSApplication sharedApplication] delegate];
-    NSColor *color = [appDelegate colorWithHexColorString:@"FFFFFF"];
-    [[NSUserDefaults standardUserDefaults] setObject:@"FFFFFF" forKey:@"clock_color"];
-    [appDelegate changeColor:color];
-}
-
-- (IBAction)greenButtonClicked:(id)sender {
-    AppDelegate *appDelegate = (AppDelegate *) [[NSApplication sharedApplication] delegate];
-    NSColor *color = [appDelegate colorWithHexColorString:@"00FF00"];
-    [[NSUserDefaults standardUserDefaults] setObject:@"00FF00" forKey:@"clock_color"];
-    [appDelegate changeColor:color];
-}
-
-- (IBAction)pinkButtonClicked:(id)sender {
-    AppDelegate *appDelegate = (AppDelegate *) [[NSApplication sharedApplication] delegate];
-    NSColor *color = [appDelegate colorWithHexColorString:@"FE69F3"];
-    [[NSUserDefaults standardUserDefaults] setObject:@"FE69F3" forKey:@"clock_color"];
-    [appDelegate changeColor:color];
-}
-
-- (IBAction)redButtonClicked:(id)sender {
-    AppDelegate *appDelegate = (AppDelegate *) [[NSApplication sharedApplication] delegate];
-    NSColor *color = [appDelegate colorWithHexColorString:@"FF0000"];
-    [[NSUserDefaults standardUserDefaults] setObject:@"FF00000" forKey:@"clock_color"];
-    [appDelegate changeColor:color];
-}
-
-- (IBAction)yellowButtonClicked:(id)sender {
-    AppDelegate *appDelegate = (AppDelegate *) [[NSApplication sharedApplication] delegate];
-    NSColor *color = [appDelegate colorWithHexColorString:@"FFFF00"];
-    [[NSUserDefaults standardUserDefaults] setObject:@"FFFF00" forKey:@"clock_color"];
-    
-    
-    [appDelegate changeColor:color];
-}
-
-- (IBAction)blueButtonClicked:(id)sender {
-    AppDelegate *appDelegate = (AppDelegate *) [[NSApplication sharedApplication] delegate];
-    NSColor *color = [appDelegate colorWithHexColorString:@"30E6FF"];
-    [[NSUserDefaults standardUserDefaults] setObject:@"30E6FF" forKey:@"clock_color"];
-    
-    
-    [appDelegate changeColor:color];
+    appDelegate.showSecondHand = enableState;
 }
 
 @end

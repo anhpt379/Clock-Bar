@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="16096" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14460.31"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaDFRPlugin" version="16002"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="16096"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+        <capability name="the Touch Bar" minToolsVersion="8.1" minSystemVersion="10.12.2" requiredIntegratedClassName="NSTouchBar"/>
     </dependencies>
     <scenes>
         <!--Application-->
@@ -12,9 +14,11 @@
                 <customObject id="Ady-hI-5gd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
                 <customObject id="Voe-Tx-rLC" customClass="AppDelegate">
                     <connections>
-                        <outlet property="prefsMenuItemAction" destination="8zc-qp-Qgx" id="6OC-cf-ZIf"/>
-                        <outlet property="quitMenuItemAction" destination="1bB-gU-CMy" id="R2d-IT-17e"/>
+                        <outlet property="clockView" destination="mfh-KG-A2h" id="KF0-dJ-1AV"/>
+                        <outlet property="dateButton" destination="7G9-C9-gqM" id="4DS-tJ-eBb"/>
                         <outlet property="statusMenu" destination="oLl-V1-4Ka" id="Xvk-NQ-7lL"/>
+                        <outlet property="timeButton" destination="npL-tI-gug" id="7Ws-ep-zrJ"/>
+                        <outlet property="touchBar" destination="PVD-4j-8Da" id="wuN-RT-R44"/>
                     </connections>
                 </customObject>
                 <application id="hnw-xV-0zn" sceneMemberID="viewController">
@@ -608,7 +612,7 @@
                                         <menuItem title="Show Sidebar" keyEquivalent="s" id="kIP-vf-haE">
                                             <modifierMask key="keyEquivalentModifierMask" control="YES" command="YES"/>
                                             <connections>
-                                                <action selector="toggleSourceList:" target="Ady-hI-5gd" id="iwa-gc-5KM"/>
+                                                <action selector="toggleSidebar:" target="Ady-hI-5gd" id="iwa-gc-5KM"/>
                                             </connections>
                                         </menuItem>
                                         <menuItem title="Enter Full Screen" keyEquivalent="f" id="4J7-dP-txa">
@@ -678,6 +682,52 @@
                         </menuItem>
                     </items>
                 </menu>
+                <touchBar id="PVD-4j-8Da">
+                    <touchBarItems>
+                        <touchBarItem id="vMN-sP-bxu">
+                            <viewController key="viewController" id="YYs-8j-wgW">
+                                <view key="view" translatesAutoresizingMaskIntoConstraints="NO" id="mfh-KG-A2h" customClass="ClockView">
+                                    <rect key="frame" x="0.0" y="0.0" width="481" height="30"/>
+                                    <userDefinedRuntimeAttributes>
+                                        <userDefinedRuntimeAttribute type="boolean" keyPath="showSecondHand" value="YES"/>
+                                    </userDefinedRuntimeAttributes>
+                                </view>
+                            </viewController>
+                        </touchBarItem>
+                        <touchBarItem id="Ot2-lb-hbK">
+                            <viewController key="viewController" id="Qgj-77-5jy">
+                                <button key="view" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="7G9-C9-gqM">
+                                    <rect key="frame" x="0.0" y="0.0" width="90" height="30"/>
+                                    <buttonCell key="cell" type="push" title="Date" bezelStyle="rounded" image="NSTouchBarTagIconTemplate" imagePosition="leading" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="BCo-0z-vHQ">
+                                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                        <font key="font" metaFont="system"/>
+                                    </buttonCell>
+                                    <connections>
+                                        <action selector="copyDate:" target="Voe-Tx-rLC" id="jfO-S6-8D9"/>
+                                    </connections>
+                                </button>
+                            </viewController>
+                        </touchBarItem>
+                        <touchBarItem id="Tpb-xd-g26">
+                            <viewController key="viewController" id="euc-vg-MKn">
+                                <button key="view" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="npL-tI-gug">
+                                    <rect key="frame" x="0.0" y="0.0" width="90" height="30"/>
+                                    <buttonCell key="cell" type="push" title="Time" bezelStyle="rounded" image="NSTouchBarHistoryTemplate" imagePosition="leading" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="hi9-BK-emp">
+                                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                        <font key="font" usesAppearanceFont="YES"/>
+                                    </buttonCell>
+                                    <connections>
+                                        <action selector="copyTime:" target="Voe-Tx-rLC" id="1Vm-Ze-ewg"/>
+                                    </connections>
+                                </button>
+                            </viewController>
+                        </touchBarItem>
+                        <touchBarSpacerItem identifier="NSTouchBarItemIdentifierFlexibleSpace" id="0mZ-yF-97l"/>
+                    </touchBarItems>
+                    <connections>
+                        <outlet property="delegate" destination="Voe-Tx-rLC" id="A9R-Aa-9Yv"/>
+                    </connections>
+                </touchBar>
             </objects>
             <point key="canvasLocation" x="75" y="0.0"/>
         </scene>
@@ -729,7 +779,7 @@
                                 </textFieldCell>
                             </textField>
                             <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hvj-7s-TwY">
-                                <rect key="frame" x="20" y="258" width="103" height="18"/>
+                                <rect key="frame" x="18" y="280" width="345" height="18"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="check" title="Open at login" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="uvS-Gd-Ucm">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -739,39 +789,10 @@
                                     <action selector="onLoginStartChanged:" target="XfG-lQ-9wD" id="57j-16-wLE"/>
                                 </connections>
                             </button>
-                            <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="03l-eq-BdN">
-                                <rect key="frame" x="203" y="258" width="194" height="18"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <buttonCell key="cell" type="check" title="Hide menu bar icon" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="n61-0U-soc">
-                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="showMenuBarChanged:" target="XfG-lQ-9wD" id="80Y-jW-1qx"/>
-                                </connections>
-                            </button>
                             <box verticalHuggingPriority="750" fixedFrame="YES" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="Dc9-Xu-cYw">
                                 <rect key="frame" x="20" y="49" width="358" height="5"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             </box>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="u1w-nD-2tt">
-                                <rect key="frame" x="18" y="177" width="337" height="46"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="left" title="* Tap the touch bar to toggle between HH:mm and hh:mm format" id="UFS-Lg-E0g">
-                                    <font key="font" metaFont="system"/>
-                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3He-LW-VIv">
-                                <rect key="frame" x="18" y="138" width="337" height="31"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="justified" title="** Long press touch bar to open preferences" id="1Zj-vo-w4A">
-                                    <font key="font" metaFont="system"/>
-                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4TQ-VZ-TmS">
                                 <rect key="frame" x="166" y="3" width="66" height="32"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -783,78 +804,6 @@
                                     <action selector="quitPressed:" target="XfG-lQ-9wD" id="nGB-Gp-XJh"/>
                                 </connections>
                             </button>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="O5O-BV-cTf" customClass="ClickableTextField">
-                                <rect key="frame" x="79" y="84" width="35" height="25"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="center" drawsBackground="YES" id="gJM-ew-aYm">
-                                    <font key="font" metaFont="system"/>
-                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" red="1" green="0.36862745098039218" blue="0.38823529411764707" alpha="1" colorSpace="calibratedRGB"/>
-                                </textFieldCell>
-                                <connections>
-                                    <action selector="redButtonClicked:" target="XfG-lQ-9wD" id="o8X-TL-G1N"/>
-                                </connections>
-                            </textField>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="UTl-qs-jQD" customClass="ClickableTextField">
-                                <rect key="frame" x="142" y="84" width="35" height="25"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="center" drawsBackground="YES" id="0Oj-Pd-bbt">
-                                    <font key="font" metaFont="system"/>
-                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" red="0.40000000000000002" green="0.80000000000000004" blue="0.31372549019607843" alpha="1" colorSpace="calibratedRGB"/>
-                                </textFieldCell>
-                                <connections>
-                                    <action selector="greenButtonClicked:" target="XfG-lQ-9wD" id="drL-WO-O7f"/>
-                                </connections>
-                            </textField>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="BKd-Wg-1hl" customClass="ClickableTextField">
-                                <rect key="frame" x="205" y="84" width="35" height="25"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="center" drawsBackground="YES" id="Caj-JZ-vD4">
-                                    <font key="font" metaFont="system"/>
-                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" red="0.031372549019607843" green="0.72941176470588232" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                </textFieldCell>
-                                <connections>
-                                    <action selector="blueButtonClicked:" target="XfG-lQ-9wD" id="wzG-go-qe9"/>
-                                </connections>
-                            </textField>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dhJ-HR-Bvf" customClass="ClickableTextField">
-                                <rect key="frame" x="264" y="84" width="35" height="25"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="center" drawsBackground="YES" id="hnN-Qm-HeZ">
-                                    <font key="font" metaFont="system"/>
-                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" red="1" green="0.78823529411764703" blue="0.38431372549019605" alpha="1" colorSpace="calibratedRGB"/>
-                                </textFieldCell>
-                                <connections>
-                                    <action selector="yellowButtonClicked:" target="XfG-lQ-9wD" id="evN-gB-j2i"/>
-                                </connections>
-                            </textField>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Vfc-wf-fWa" customClass="ClickableTextField">
-                                <rect key="frame" x="20" y="84" width="35" height="25"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="center" drawsBackground="YES" id="5PV-9G-xFc">
-                                    <font key="font" metaFont="system"/>
-                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" red="0.99999600649999998" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                </textFieldCell>
-                                <connections>
-                                    <action selector="whiteButtonClicked:" target="XfG-lQ-9wD" id="kYz-vz-XTD"/>
-                                </connections>
-                            </textField>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="NOP-vj-4bc" customClass="ClickableTextField">
-                                <rect key="frame" x="326" y="84" width="35" height="25"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="center" drawsBackground="YES" id="QTS-FK-ZGy">
-                                    <font key="font" metaFont="system"/>
-                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" red="0.85490196078431369" green="0.31764705882352939" blue="0.71372549019607845" alpha="1" colorSpace="calibratedRGB"/>
-                                </textFieldCell>
-                                <connections>
-                                    <action selector="pinkButtonClicked:" target="XfG-lQ-9wD" id="Tjn-9U-sc2"/>
-                                </connections>
-                            </textField>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="UhA-eV-vsx">
                                 <rect key="frame" x="121" y="304" width="140" height="32"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -863,11 +812,34 @@
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                             </button>
+                            <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="03l-eq-BdN">
+                                <rect key="frame" x="18" y="245" width="356" height="18"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="check" title="Hide menu bar icon" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="n61-0U-soc">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="showMenuBarChanged:" target="XfG-lQ-9wD" id="80Y-jW-1qx"/>
+                                </connections>
+                            </button>
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="KFc-rF-qxc">
+                                <rect key="frame" x="18" y="211" width="345" height="18"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="check" title="Show second hand" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="aeB-zW-sn7">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="showSecondHandChanged:" target="XfG-lQ-9wD" id="laz-mm-Za8"/>
+                                </connections>
+                            </button>
                         </subviews>
                     </view>
                     <connections>
                         <outlet property="autoLoginState" destination="hvj-7s-TwY" id="adQ-vO-ZXg"/>
                         <outlet property="showInMenuBarState" destination="03l-eq-BdN" id="dNu-RU-PeR"/>
+                        <outlet property="showSecondHandState" destination="KFc-rF-qxc" id="Wrb-On-daZ"/>
                     </connections>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
@@ -875,4 +847,8 @@
             <point key="canvasLocation" x="75" y="658.5"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="NSTouchBarHistoryTemplate" width="18" height="30"/>
+        <image name="NSTouchBarTagIconTemplate" width="23" height="30"/>
+    </resources>
 </document>

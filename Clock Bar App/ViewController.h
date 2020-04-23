@@ -4,18 +4,10 @@
 
 @property (nonatomic, weak) IBOutlet NSButton *autoLoginState;
 @property (nonatomic, weak) IBOutlet NSButton *showInMenuBarState;
-
-
+@property (nonatomic, weak) IBOutlet NSButton *showSecondHandState;
 
 - (IBAction)showMenuBarChanged:(id)sender;
-
-- (IBAction)whiteButtonClicked:(id)sender;
-- (IBAction)redButtonClicked:(id)sender;
-- (IBAction)yellowButtonClicked:(id)sender;
-- (IBAction)blueButtonClicked:(id)sender;
-- (IBAction)greenButtonClicked:(id)sender;
-- (IBAction)pinkButtonClicked:(id)sender;
-
+- (IBAction)showSecondHandChanged:(id)sender;
 
 @end
 
