@@ -189,7 +189,7 @@ static const NSTouchBarItemIdentifier kMuteIdentifier = @"ns.clock";
     
     // schedule efficient update
     NSCalendar *const calendar = [NSCalendar currentCalendar];
-    NSDateComponents *const dateComponents = [calendar components:NSCalendarUnitHour
+    NSDateComponents *const dateComponents = [calendar components:NSCalendarUnitMinute
                                                          fromDate:now];
     const NSTimeInterval delay = 60 - dateComponents.minute;
     __weak AppDelegate *welf = self;
