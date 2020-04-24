@@ -16,6 +16,7 @@
                     <connections>
                         <outlet property="clockView" destination="mfh-KG-A2h" id="KF0-dJ-1AV"/>
                         <outlet property="dateButton" destination="7G9-C9-gqM" id="4DS-tJ-eBb"/>
+                        <outlet property="eventScrubber" destination="sdX-pB-Efo" id="fT7-Wx-Vog"/>
                         <outlet property="statusMenu" destination="oLl-V1-4Ka" id="Xvk-NQ-7lL"/>
                         <outlet property="timeButton" destination="npL-tI-gug" id="7Ws-ep-zrJ"/>
                         <outlet property="touchBar" destination="PVD-4j-8Da" id="wuN-RT-R44"/>
@@ -687,7 +688,7 @@
                         <touchBarItem id="vMN-sP-bxu">
                             <viewController key="viewController" id="YYs-8j-wgW">
                                 <view key="view" translatesAutoresizingMaskIntoConstraints="NO" id="mfh-KG-A2h" customClass="ClockView">
-                                    <rect key="frame" x="0.0" y="0.0" width="481" height="30"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="241" height="30"/>
                                     <userDefinedRuntimeAttributes>
                                         <userDefinedRuntimeAttribute type="boolean" keyPath="showSecondHand" value="YES"/>
                                     </userDefinedRuntimeAttributes>
@@ -722,7 +723,20 @@
                                 </button>
                             </viewController>
                         </touchBarItem>
-                        <touchBarSpacerItem identifier="NSTouchBarItemIdentifierFlexibleSpace" id="0mZ-yF-97l"/>
+                        <touchBarItem id="rHs-pk-7nf">
+                            <viewController key="viewController" id="4Br-bI-ieY">
+                                <scrubber key="view" mode="1" itemAlignment="1" showsAdditionalContentIndicators="YES" translatesAutoresizingMaskIntoConstraints="NO" id="sdX-pB-Efo">
+                                    <rect key="frame" x="0.0" y="0.0" width="241" height="30"/>
+                                    <scrubberFlowLayout key="scrubberLayout" itemSpacing="1">
+                                        <size key="itemSize" width="100" height="30"/>
+                                    </scrubberFlowLayout>
+                                    <connections>
+                                        <outlet property="dataSource" destination="Voe-Tx-rLC" id="bKw-fN-vAk"/>
+                                        <outlet property="delegate" destination="Voe-Tx-rLC" id="V5R-28-HVE"/>
+                                    </connections>
+                                </scrubber>
+                            </viewController>
+                        </touchBarItem>
                     </touchBarItems>
                     <connections>
                         <outlet property="delegate" destination="Voe-Tx-rLC" id="A9R-Aa-9Yv"/>
@@ -739,7 +753,7 @@
                         <windowStyleMask key="styleMask" titled="YES" closable="YES"/>
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
                         <rect key="contentRect" x="196" y="240" width="400" height="223"/>
-                        <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1027"/>
+                        <rect key="screenRect" x="0.0" y="0.0" width="1792" height="1120"/>
                         <connections>
                             <outlet property="delegate" destination="B8D-0N-5wS" id="QmJ-VN-65d"/>
                         </connections>

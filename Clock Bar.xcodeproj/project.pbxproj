@@ -15,6 +15,7 @@
 		11B86E661EDE9BD00069D254 /* DFRFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11B86E651EDE9BD00069D254 /* DFRFoundation.framework */; };
 		11B86E981EDEC6720069D254 /* ServiceManagement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11B86E921EDEAD1D0069D254 /* ServiceManagement.framework */; };
 		C102FB6E245201D5001716D9 /* ClockView.m in Sources */ = {isa = PBXBuildFile; fileRef = C102FB6D245201D5001716D9 /* ClockView.m */; };
+		C1056BC224530F770054C59F /* calendar.js in Resources */ = {isa = PBXBuildFile; fileRef = C1056BC124530F770054C59F /* calendar.js */; };
 		D53E002C2054A19A001625A6 /* clock-64.png in Resources */ = {isa = PBXBuildFile; fileRef = D53E002B2054A19A001625A6 /* clock-64.png */; };
 		D5A462752054B17B00E8B47E /* Clock Launcher.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = D5A462652054B06B00E8B47E /* Clock Launcher.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		DE0A9D0E21BDB33B004A5BF9 /* ClickableTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = DE0A9D0D21BDB33B004A5BF9 /* ClickableTextField.m */; };
@@ -64,9 +65,9 @@
 		11B86E651EDE9BD00069D254 /* DFRFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DFRFoundation.framework; path = ../../../../../../System/Library/PrivateFrameworks/DFRFoundation.framework; sourceTree = "<group>"; };
 		11B86E671EDE9CDC0069D254 /* TouchBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TouchBar.h; sourceTree = "<group>"; };
 		11B86E921EDEAD1D0069D254 /* ServiceManagement.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ServiceManagement.framework; path = System/Library/Frameworks/ServiceManagement.framework; sourceTree = SDKROOT; };
-		11B86E9A1EDECB3F0069D254 /* Clock Bar App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Clock Bar App.entitlements"; sourceTree = "<group>"; };
 		C102FB6C245201D5001716D9 /* ClockView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ClockView.h; sourceTree = "<group>"; };
 		C102FB6D245201D5001716D9 /* ClockView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ClockView.m; sourceTree = "<group>"; };
+		C1056BC124530F770054C59F /* calendar.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = calendar.js; sourceTree = "<group>"; };
 		D53C8A03205510EF00EAAA3D /* Clock Bar.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Clock Bar.entitlements"; sourceTree = "<group>"; };
 		D53E002B2054A19A001625A6 /* clock-64.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "clock-64.png"; sourceTree = "<group>"; };
 		D5A462602054B06B00E8B47E /* Clock Launcher.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "Clock Launcher.xcodeproj"; path = "Clock Bar App/Clock Launcher/Clock Launcher.xcodeproj"; sourceTree = "<group>"; };
@@ -111,7 +112,6 @@
 		11B86E4F1EDE9B4D0069D254 /* Clock Bar App */ = {
 			isa = PBXGroup;
 			children = (
-				11B86E9A1EDECB3F0069D254 /* Clock Bar App.entitlements */,
 				11B86E501EDE9B4D0069D254 /* AppDelegate.h */,
 				11B86E511EDE9B4D0069D254 /* AppDelegate.m */,
 				11B86E561EDE9B4D0069D254 /* ViewController.h */,
@@ -126,6 +126,7 @@
 				1141FDF51EEFFA0000CA5B30 /* TouchDelegate.h */,
 				C102FB6C245201D5001716D9 /* ClockView.h */,
 				C102FB6D245201D5001716D9 /* ClockView.m */,
+				C1056BC124530F770054C59F /* calendar.js */,
 			);
 			path = "Clock Bar App";
 			sourceTree = "<group>";
@@ -243,6 +244,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C1056BC224530F770054C59F /* calendar.js in Resources */,
 				D53E002C2054A19A001625A6 /* clock-64.png in Resources */,
 				11B86E5A1EDE9B4D0069D254 /* Assets.xcassets in Resources */,
 				11B86E5D1EDE9B4D0069D254 /* Main.storyboard in Resources */,

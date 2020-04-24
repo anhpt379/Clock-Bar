@@ -6,14 +6,28 @@
 #import "TouchDelegate.h"
 #import "ClockView.h"
 
+// So we don't need to import Carbon
+#define kASAppleScriptSuite 'ascr'
+#define kASSubroutineEvent  'psbr'
+#define keyASSubroutineName 'snam'
+//@import Carbon
+
 static const NSTouchBarItemIdentifier kClockIdentifier = @"ns.clock";
 
-@interface AppDelegate () <TouchDelegate>
+static const NSTouchBarItemIdentifier kEventIdentifier = @"ns.clock.event";
+
+@interface AppDelegate () <TouchDelegate, NSScrubberDataSource, NSScrubberDelegate>
 
 @property (nonatomic, strong) NSDateFormatter *dateFormatter;
 @property (nonatomic, strong) NSDateFormatter *timeFormatter;
 
+@property (nonatomic, strong) EKEventStore *eventStore;
+
+@property (nonatomic, strong) NSArray *events;
+
 @property (nonatomic, strong) dispatch_block_t update;
+
+- (void) updateCalendarItems;
 
 @end
 
@@ -32,7 +46,7 @@ static const NSTouchBarItemIdentifier kClockIdentifier = @"ns.clock";
     
     _timeFormatter = [[NSDateFormatter alloc] init];
     _timeFormatter.timeStyle = NSDateFormatterShortStyle;
-    _timeFormatter.dateFormat = @"HH:mm:ss";
+    _timeFormatter.dateFormat = @"HH:mm";
     
     NSClickGestureRecognizer *const press =
     [[NSClickGestureRecognizer alloc] initWithTarget:self
@@ -61,8 +75,7 @@ static const NSTouchBarItemIdentifier kClockIdentifier = @"ns.clock";
 
     [NSTouchBarItem addSystemTrayItem:time];
     DFRElementSetControlStripPresenceForIdentifier(kClockIdentifier, YES);
-    
-//    EKEventStore *store = [[EKEventStore alloc] initWithAccessToEntityTypes:EKEntityMaskEvent];
+
 //    https://developer.apple.com/documentation/eventkit/ekeventstore/1507547-requestaccesstoentitytype?language=objc
     
     [self enableLoginAutostart];
@@ -77,7 +90,50 @@ static const NSTouchBarItemIdentifier kClockIdentifier = @"ns.clock";
 
     [self hideMenuBar:hideStatusBar];
     
+    [_eventScrubber registerClass:[NSScrubberTextItemView class] forItemIdentifier:kEventIdentifier];
+    
     [super awakeFromNib];
+    
+    switch ([EKEventStore authorizationStatusForEntityType:EKEntityTypeEvent]) {
+        case EKAuthorizationStatusAuthorized:
+            NSLog(@"We're good");
+            _eventStore = [[EKEventStore alloc] init];
+            [self updateCalendarItems];
+            break;
+            
+        case EKAuthorizationStatusDenied:
+            NSLog(@"Denied");
+            break;
+        
+        case EKAuthorizationStatusRestricted:
+            NSLog(@"Restricted whatever that means");
+            break;
+            
+        case EKAuthorizationStatusNotDetermined:
+            NSLog(@"Undetermined");
+            _eventStore = [EKEventStore alloc];
+            [_eventStore requestAccessToEntityType:EKEntityTypeEvent completion:^(BOOL granted, NSError * _Nullable error) {
+                NSLog(@"Granted? %d or %@", granted, error);
+                if (granted) {
+                    self.eventStore = [self.eventStore init];
+                    [self updateCalendarItems];
+                }
+            }];
+            
+            break;
+    }
+}
+
+- (void)updateCalendarItems {
+    [_eventStore reset];
+    NSArray *calendars = [_eventStore calendarsForEntityType:EKEntityTypeEvent];
+    NSLog(@"Calendars %@", calendars);
+    
+    NSDate *now = [NSDate date];
+    NSDate *future = [[NSCalendar currentCalendar] dateByAddingUnit:NSCalendarUnitDay value:7 toDate:now options:0];
+    
+    NSPredicate *pred = [_eventStore predicateForEventsWithStartDate:now endDate:future calendars:calendars];
+    _events = [_eventStore eventsMatchingPredicate:pred];
 }
 
 - (void)setupStatusBarItem {
@@ -204,6 +260,60 @@ void copyDateToPasteboard(NSDateFormatter *formatter) {
 
 - (IBAction)copyTime:(id)sender {
     copyDateToPasteboard(_timeFormatter);
+}
+
+- (NSInteger)numberOfItemsForScrubber:(nonnull NSScrubber *)scrubber {
+    return _events == nil ? 0 : (NSInteger) [_events count];
+}
+
+- (__kindof NSScrubberItemView *)makeItemWithIdentifier:(NSUserInterfaceItemIdentifier)itemIdentifier owner:(id)owner {
+    return [[NSScrubberTextItemView alloc] init];
+}
+
+- (nonnull __kindof NSScrubberItemView *)scrubber:(nonnull NSScrubber *)scrubber viewForItemAtIndex:(NSInteger)index {
+    NSScrubberTextItemView *itemView = [scrubber makeItemWithIdentifier:kEventIdentifier owner:self];
+    
+    if (_events != nil && index < (NSInteger)[_events count]) {
+        itemView.title = [(EKEvent*) [_events objectAtIndex:(NSUInteger)index] title];
+    }
+    return itemView;
+}
+
+- (void)scrubber:(NSScrubber *)scrubber didSelectItemAtIndex:(NSInteger)index {
+    NSLog(@"Selected item %ld", index);
+    
+    EKEvent *event = (EKEvent*) [_events objectAtIndex:(NSUInteger)index];
+    
+    if (event == nil)
+        return;
+    
+    NSLog(@"Event: %@",event);
+    NSURL *url = [[NSURL alloc] initFileURLWithPath:[[NSBundle mainBundle] pathForResource:@"calendar" ofType:@"js"]];
+    NSDictionary* error = nil;
+    NSAppleScript *script = [[NSAppleScript alloc] initWithContentsOfURL:url error:&error];
+    if (error != nil) {
+        NSLog(@"Could not instantiate applescript %@", error);
+        return;
+    }
+    
+    //Get a descriptor for ourself
+    int pid = [[NSProcessInfo processInfo] processIdentifier];
+    NSAppleEventDescriptor *thisApplication = [NSAppleEventDescriptor descriptorWithDescriptorType:typeKernelProcessID bytes:&pid length:sizeof(pid)];
+    
+    //We need these constants from the Carbon OpenScripting framework, but we don't actually need Carbon.framework...
+    NSAppleEventDescriptor *containerEvent = [NSAppleEventDescriptor appleEventWithEventClass:kASAppleScriptSuite eventID:kASSubroutineEvent targetDescriptor:thisApplication returnID:kAutoGenerateReturnID transactionID:kAnyTransactionID];
+    
+    //Set the target function
+    [containerEvent setParamDescriptor:[NSAppleEventDescriptor descriptorWithString:@"showEvent"] forKeyword:keyASSubroutineName];
+    
+    NSAppleEventDescriptor *arguments = [[NSAppleEventDescriptor alloc] initListDescriptor];
+    [arguments insertDescriptor:[NSAppleEventDescriptor descriptorWithString:event.calendarItemIdentifier] atIndex:1];
+    [containerEvent setParamDescriptor:arguments forKeyword:keyDirectObject];
+    
+    NSAppleEventDescriptor *result = [script executeAppleEvent:containerEvent error:&error];
+    if (error != nil) {
+        NSLog(@"error while executing script. Error %@", error);
+    }
 }
 
 @end

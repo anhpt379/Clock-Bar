@@ -2,7 +2,7 @@
 
 #include "ClockView.h"
 
-@interface AppDelegate : NSObject <NSApplicationDelegate>
+@interface AppDelegate : NSObject <NSApplicationDelegate, NSScrubberDataSource, NSScrubberDelegate>
 
 @property (nonatomic, weak) IBOutlet NSMenu *statusMenu;
 
@@ -17,6 +17,8 @@
 @property (nonatomic, weak) IBOutlet NSButton *dateButton;
 
 @property (nonatomic, weak) IBOutlet NSButton *timeButton;
+
+@property (nonatomic, weak) IBOutlet NSScrubber *eventScrubber;
 
 - (IBAction)prefsMenuItemAction:(id)sender;
 
