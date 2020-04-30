@@ -6,8 +6,17 @@
 //  Copyright © 2020 Nihalsharma. All rights reserved.
 //
 
+@import EventKit;
 #import "ClockView.h"
 #include <math.h>
+
+
+@interface ClockView ()
+
+- (void)appendArcToPath:(NSBezierPath*)path forEvent:(EKEvent*)event withRadius:(double)radius atPosition:(NSPoint)center;
+- (NSBezierPath*)pathForHandAtFraction:(double)fraction withRadius:(double)radius atPosition:(NSPoint)center;
+
+@end
 
 @implementation ClockView
 
@@ -38,11 +47,43 @@
     }
 }
 
-- (void)drawHandAtAngle:(double)angle withRadius:(double)radius atPosition:(NSPoint) center {
+@synthesize events = _events;
+
+double getHourHandFraction(NSDateComponents *dateComponents) {
+    return (((dateComponents.hour % 12) + dateComponents.minute / 60.0) / 12.0);
+}
+
+double getMinuteHandFraction(NSDateComponents *dateComponents) {
+    return ((dateComponents.minute + dateComponents.second / 60.0) / 60.0);
+}
+
+double getSecondHandFraction(NSDateComponents *dateComponents) {
+    return ((dateComponents.second + dateComponents.nanosecond / (double) NSEC_PER_SEC) / 60.0);
+}
+
+- (void)setEvents:(NSArray *)events {
+    _events = events;
+    [self setNeedsDisplay:YES];
+}
+
+- (void) appendArcToPath:(NSBezierPath *)path forEvent:(EKEvent*)event withRadius:(double)radius atPosition:(NSPoint) center {
+    NSCalendar *const calendar = [NSCalendar currentCalendar];
+    NSDateComponents* const start = [calendar components:(NSCalendarUnitMinute|NSCalendarUnitHour)
+                                                fromDate:event.startDate];
+    NSDateComponents* const end   = [calendar components:(NSCalendarUnitMinute|NSCalendarUnitHour)
+                                                fromDate:event.endDate];
+    [path appendBezierPathWithArcWithCenter:center
+                                     radius:radius
+                                 startAngle:450 - 360 * getHourHandFraction(end)
+                                   endAngle:450 - 360 * getHourHandFraction(start)];
+}
+
+- (NSBezierPath*)pathForHandAtFraction:(double)fraction withRadius:(double)radius atPosition:(NSPoint) center {
+    double rad = 2.0 * M_PI * fraction - 0.5 * M_PI;
     NSBezierPath *path = [NSBezierPath bezierPath];
     [path moveToPoint:center];
-    [path relativeLineToPoint:NSMakePoint(cos(angle) * radius, -sin(angle) * radius)];
-    [path stroke];
+    [path relativeLineToPoint:NSMakePoint(cos(rad) * radius, -sin(rad) * radius)];
+    return path;
 }
 
 - (void)drawRect:(NSRect)dirtyRect {
@@ -66,10 +107,6 @@
                                                                    NSCalendarUnitNanosecond)
                                                          fromDate:_date];
     
-    double hourAngle   = 2.0 * M_PI * ((dateComponents.hour + dateComponents.minute / 60.0) / 12.0) - 0.5 * M_PI;
-    double minuteAngle = 2.0 * M_PI * ((dateComponents.minute + dateComponents.second / 60.0) / 60.0) - 0.5 * M_PI;
-    double secondAngle = 2.0 * M_PI * ((dateComponents.second + dateComponents.nanosecond / (double) NSEC_PER_SEC) / 60.0) - 0.5 * M_PI;
-    
     NSPoint center = NSMakePoint(NSWidth([self bounds]) / 2,
                                  NSHeight([self bounds]) / 2);
     
@@ -79,22 +116,46 @@
     // Save the current graphics context settings
     [gc saveGraphicsState];
 
-    // Set the color in the current graphics context for future draw operations
+    NSBezierPath *path;
+    
+    // Draw event segment backgrounds
+    if (true) {
+        for (EKEvent *event in _events) {
+            [event.calendar.color setFill];
+            [[event.calendar.color blendedColorWithFraction:0.2 ofColor:[NSColor clearColor]] setFill];
+            
+            path = [NSBezierPath bezierPath];
+            [path moveToPoint:center];
+            [self appendArcToPath:path forEvent:event withRadius:radius atPosition:center];
+            [path fill];
+        }
+    }
+    
+    // Draw clock outline
     [_color setStroke];
-
-    // Create our circle path
     NSRect rect = NSMakeRect(center.x - radius, center.y - radius, 2 * radius, 2 * radius);
-    NSBezierPath* circlePath = [NSBezierPath bezierPath];
-    [circlePath appendBezierPathWithOvalInRect: rect];
-
-    // Outline and fill the path
-    [circlePath stroke];
-    [self drawHandAtAngle:hourAngle withRadius:hourRadius atPosition:center];
-    [self drawHandAtAngle:minuteAngle withRadius:minuteRadius atPosition:center];
+    path = [NSBezierPath bezierPath];
+    [path appendBezierPathWithOvalInRect: rect];
+    [path stroke];
+    
+    // Draw event segment outlines
+    if (false) {
+        for (EKEvent *event in _events) {
+            [event.calendar.color setStroke];
+            path = [NSBezierPath bezierPath];
+            [self appendArcToPath:path forEvent:event withRadius:radius atPosition:center];
+            [path stroke];
+        }
+    }
+    
+    // Draw clock hands
+    [_color setStroke];
+    [[self pathForHandAtFraction:getHourHandFraction(dateComponents) withRadius:hourRadius atPosition:center] stroke];
+    [[self pathForHandAtFraction:getMinuteHandFraction(dateComponents) withRadius:minuteRadius atPosition:center] stroke];
     
     if (_showSecondHand) {
         [[_color blendedColorWithFraction:0.2 ofColor:[NSColor clearColor]] setStroke];
-        [self drawHandAtAngle:secondAngle withRadius:secondRadius atPosition:center];
+        [[self pathForHandAtFraction:getSecondHandFraction(dateComponents) withRadius:secondRadius atPosition:center] stroke];
     }
 
     // Restore the context to what it was before we messed with it

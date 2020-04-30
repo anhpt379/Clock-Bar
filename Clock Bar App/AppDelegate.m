@@ -25,9 +25,20 @@ static const NSTouchBarItemIdentifier kEventIdentifier = @"ns.clock.event";
 
 @property (nonatomic, strong) NSArray *events;
 
+@property (nonatomic, strong) NSArray *currentEvents;
+
 @property (nonatomic, strong) dispatch_block_t update;
 
 - (void) updateCalendarItems;
+- (void) openEventInCalendar:(EKEvent*)event;
+- (void) openEventDayInCalendar:(EKEvent*)event;
+
+@end
+
+@interface NSDate (DayAdditions)
+
+- (NSDate*) startOfDay;
+- (NSDate*) endOfDay;
 
 @end
 
@@ -92,8 +103,12 @@ static const NSTouchBarItemIdentifier kEventIdentifier = @"ns.clock.event";
     
     [_eventScrubber registerClass:[NSScrubberTextItemView class] forItemIdentifier:kEventIdentifier];
     
-    [super awakeFromNib];
+    [self requestUpdateOfCalendarItems];
     
+    [super awakeFromNib];
+}
+
+- (void)requestUpdateOfCalendarItems {
     switch ([EKEventStore authorizationStatusForEntityType:EKEntityTypeEvent]) {
         case EKAuthorizationStatusAuthorized:
             NSLog(@"We're good");
@@ -119,7 +134,6 @@ static const NSTouchBarItemIdentifier kEventIdentifier = @"ns.clock.event";
                     [self updateCalendarItems];
                 }
             }];
-            
             break;
     }
 }
@@ -127,13 +141,32 @@ static const NSTouchBarItemIdentifier kEventIdentifier = @"ns.clock.event";
 - (void)updateCalendarItems {
     [_eventStore reset];
     NSArray *calendars = [_eventStore calendarsForEntityType:EKEntityTypeEvent];
-    NSLog(@"Calendars %@", calendars);
+//    NSLog(@"Calendars %@", calendars);
     
+    calendars = [calendars filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(EKCalendar *calendar, NSDictionary<NSString *,id> *bindings) {
+        return true; // TODO only show selected calendars
+    }]];
+    
+    // Give me all events of today
     NSDate *now = [NSDate date];
-    NSDate *future = [[NSCalendar currentCalendar] dateByAddingUnit:NSCalendarUnitDay value:7 toDate:now options:0];
+    NSDate *halfDay = [now dateByAddingTimeInterval:12*60*60];
+    NSPredicate *pred = [_eventStore predicateForEventsWithStartDate:now endDate:halfDay calendars:calendars];
+    NSArray *events = [_eventStore eventsMatchingPredicate:pred];
     
-    NSPredicate *pred = [_eventStore predicateForEventsWithStartDate:now endDate:future calendars:calendars];
-    _events = [_eventStore eventsMatchingPredicate:pred];
+    // Remove all-day events
+    events = [events filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(EKEvent *event, id _) {
+        return !event.allDay;
+    }]];
+    
+    // Sort by start date
+    events = [events sortedArrayUsingComparator:^NSComparisonResult(EKEvent *lft, EKEvent *rht) {
+        return [lft.startDate isGreaterThan:rht.startDate];
+    }];
+    
+    for (EKEvent *event in events)
+        NSLog(@"Event %@ at %@", event.title, event.startDate);
+    
+    _events = events;
 }
 
 - (void)setupStatusBarItem {
@@ -178,6 +211,7 @@ static const NSTouchBarItemIdentifier kEventIdentifier = @"ns.clock.event";
     // Do the update
     NSDate *const now = [NSDate date];
     _clockIcon.date = now;
+    _clockIcon.events = _events;
     
     // Also update the touch bar buttons if they're visible
     if (self.touchBar.isVisible) {
@@ -230,6 +264,7 @@ static const NSTouchBarItemIdentifier kEventIdentifier = @"ns.clock.event";
 }
 
 - (void)onPressed:(NSButton *)sender {
+    [self requestUpdateOfCalendarItems];
     [self presentTouchBar:nil];
 }
 
@@ -323,6 +358,28 @@ void copyDateToPasteboard(NSDateFormatter *formatter) {
     if (error != nil) {
         NSLog(@"error while executing script. Error %@", error);
     }
+}
+
+@end
+
+@implementation NSDate (DayAdditions)
+
+-(NSDate *)startOfDay {
+    NSCalendar *cal = [NSCalendar currentCalendar];
+    NSDateComponents *components = [cal components:(NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear | NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond ) fromDate:self];
+    [components setHour:0];
+    [components setMinute:0];
+    [components setSecond:0];
+    return [cal dateFromComponents:components];
+}
+
+-(NSDate *)endOfDay {
+    NSCalendar *cal = [NSCalendar currentCalendar];
+    NSDateComponents *components = [cal components:(NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear | NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond ) fromDate:self];
+    [components setHour:23];
+    [components setMinute:59];
+    [components setSecond:59];
+    return [cal dateFromComponents:components];
 }
 
 @end

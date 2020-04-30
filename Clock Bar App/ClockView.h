@@ -16,9 +16,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, strong) NSColor *color;
 
-@property (nonatomic) BOOL showSecondHand;
+@property (nonatomic, strong) NSArray *events;
 
-- (void)drawHandAtAngle:(double)angle withRadius:(double)radius atPosition:(NSPoint) center;
+@property (nonatomic) BOOL showSecondHand;
 
 - (void)setDate:(NSDate *)date;
 
