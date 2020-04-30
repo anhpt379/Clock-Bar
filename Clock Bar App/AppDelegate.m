@@ -5,6 +5,7 @@
 #import "TouchBar.h"
 #import "TouchDelegate.h"
 #import "ClockView.h"
+#import "ScrubberEventItemView.h"
 
 // So we don't need to import Carbon
 #define kASAppleScriptSuite 'ascr'
@@ -100,7 +101,7 @@ static const NSTouchBarItemIdentifier kEventIdentifier = @"ns.clock.event";
 
     [self hideMenuBar:hideStatusBar];
     
-    [_eventScrubber registerClass:[NSScrubberTextItemView class] forItemIdentifier:kEventIdentifier];
+    [_eventScrubber registerClass:[ScrubberEventItemView class] forItemIdentifier:kEventIdentifier];
     
     [self requestUpdateOfCalendarItems];
     
@@ -140,7 +141,6 @@ static const NSTouchBarItemIdentifier kEventIdentifier = @"ns.clock.event";
 - (void)updateCalendarItems {
     [_eventStore reset];
     NSArray *calendars = [_eventStore calendarsForEntityType:EKEntityTypeEvent];
-//    NSLog(@"Calendars %@", calendars);
     
     calendars = [calendars filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(EKCalendar *calendar, NSDictionary<NSString *,id> *bindings) {
         return true; // TODO only show selected calendars
@@ -161,9 +161,6 @@ static const NSTouchBarItemIdentifier kEventIdentifier = @"ns.clock.event";
     events = [events sortedArrayUsingComparator:^NSComparisonResult(EKEvent *lft, EKEvent *rht) {
         return [lft.startDate isGreaterThan:rht.startDate];
     }];
-    
-    for (EKEvent *event in events)
-        NSLog(@"Event %@ at %@", event.title, event.startDate);
     
     _events = events;
 }
@@ -305,19 +302,16 @@ void copyDateToPasteboard(NSDateFormatter *formatter) {
 }
 
 - (nonnull __kindof NSScrubberItemView *)scrubber:(nonnull NSScrubber *)scrubber viewForItemAtIndex:(NSInteger)index {
-    NSScrubberTextItemView *itemView = [scrubber makeItemWithIdentifier:kEventIdentifier owner:self];
+    ScrubberEventItemView *itemView = [scrubber makeItemWithIdentifier:kEventIdentifier owner:self];
     
     if (_events != nil && index < (NSInteger)[_events count]) {
-        itemView.title = [(EKEvent*) [_events objectAtIndex:(NSUInteger)index] title];
+        itemView.event = (EKEvent*) [_events objectAtIndex:(NSUInteger)index];
     }
     return itemView;
 }
 
 - (void)scrubber:(NSScrubber *)scrubber didSelectItemAtIndex:(NSInteger)index {
-    NSLog(@"Selected item %ld", index);
-    
     EKEvent *event = (EKEvent*) [_events objectAtIndex:(NSUInteger)index];
-    NSLog(@"%ld", [event.startDate timeIntervalSinceReferenceDate]);
     [self openEventInCalendar:event];
 }
 
