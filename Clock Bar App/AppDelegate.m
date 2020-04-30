@@ -283,11 +283,11 @@ void copyDateToPasteboard(NSDateFormatter *formatter) {
     NSLog(@"Selected item %ld", index);
     
     EKEvent *event = (EKEvent*) [_events objectAtIndex:(NSUInteger)index];
-    
-    if (event == nil)
-        return;
-    
-    NSLog(@"Event: %@",event);
+    NSLog(@"%ld", [event.startDate timeIntervalSinceReferenceDate]);
+    [self openEventInCalendar:event];
+}
+
+- (void)openEventInCalendar:(EKEvent*)event {
     NSURL *url = [[NSURL alloc] initFileURLWithPath:[[NSBundle mainBundle] pathForResource:@"calendar" ofType:@"js"]];
     NSDictionary* error = nil;
     NSAppleScript *script = [[NSAppleScript alloc] initWithContentsOfURL:url error:&error];
@@ -304,13 +304,22 @@ void copyDateToPasteboard(NSDateFormatter *formatter) {
     NSAppleEventDescriptor *containerEvent = [NSAppleEventDescriptor appleEventWithEventClass:kASAppleScriptSuite eventID:kASSubroutineEvent targetDescriptor:thisApplication returnID:kAutoGenerateReturnID transactionID:kAnyTransactionID];
     
     //Set the target function
-    [containerEvent setParamDescriptor:[NSAppleEventDescriptor descriptorWithString:@"showEvent"] forKeyword:keyASSubroutineName];
+    [containerEvent setParamDescriptor:[NSAppleEventDescriptor descriptorWithString:@"showEventOrDate"] forKeyword:keyASSubroutineName];
     
+    // Build argument list
     NSAppleEventDescriptor *arguments = [[NSAppleEventDescriptor alloc] initListDescriptor];
-    [arguments insertDescriptor:[NSAppleEventDescriptor descriptorWithString:event.calendarItemIdentifier] atIndex:1];
-    [containerEvent setParamDescriptor:arguments forKeyword:keyDirectObject];
+        
+    // First argument: event identifier
+    [arguments insertDescriptor:[NSAppleEventDescriptor descriptorWithString:event.eventIdentifier] atIndex:1];
     
-    NSAppleEventDescriptor *result = [script executeAppleEvent:containerEvent error:&error];
+    // Second argument: event date (in case of recurring events: which one?)
+    NSDateFormatter *rfc2822Formatter = [[NSDateFormatter alloc] init];
+    rfc2822Formatter.dateFormat = @"EEE, dd MMM yyyy HH:mm:ss Z";
+    [arguments insertDescriptor:[NSAppleEventDescriptor descriptorWithString:[rfc2822Formatter stringFromDate:event.startDate]] atIndex:2];
+    
+    // Push arguments and execute!
+    [containerEvent setParamDescriptor:arguments forKeyword:keyDirectObject];
+    [script executeAppleEvent:containerEvent error:&error];
     if (error != nil) {
         NSLog(@"error while executing script. Error %@", error);
     }
