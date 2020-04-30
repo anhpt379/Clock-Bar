@@ -31,7 +31,6 @@ static const NSTouchBarItemIdentifier kEventIdentifier = @"ns.clock.event";
 
 - (void) updateCalendarItems;
 - (void) openEventInCalendar:(EKEvent*)event;
-- (void) openEventDayInCalendar:(EKEvent*)event;
 
 @end
 
