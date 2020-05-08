@@ -1,21 +1,19 @@
 @import Cocoa;
 @import ServiceManagement;
 @import EventKit;
+#import "AppConstants.h"
 #import "AppDelegate.h"
 #import "TouchBar.h"
 #import "TouchDelegate.h"
 #import "ClockView.h"
 #import "ScrubberEventItemView.h"
 
+#define LE_CHR(a,b,c,d) ( ((a)<<24) | ((b)<<16) | ((c)<<8) | (d) )
+
 // So we don't need to import Carbon
-#define kASAppleScriptSuite 'ascr'
-#define kASSubroutineEvent  'psbr'
-#define keyASSubroutineName 'snam'
-//@import Carbon
-
-static const NSTouchBarItemIdentifier kClockIdentifier = @"ns.clock";
-
-static const NSTouchBarItemIdentifier kEventIdentifier = @"ns.clock.event";
+#define kASAppleScriptSuite LE_CHR('a','s','c','r')
+#define kASSubroutineEvent  LE_CHR('p','s','b','r')
+#define keyASSubroutineName LE_CHR('s','n','a','m')
 
 @interface AppDelegate () <TouchDelegate, NSScrubberDataSource, NSScrubberDelegate>
 
@@ -30,8 +28,17 @@ static const NSTouchBarItemIdentifier kEventIdentifier = @"ns.clock.event";
 
 @property (nonatomic, strong) dispatch_block_t update;
 
-- (void) updateCalendarItems;
-- (void) openEventInCalendar:(EKEvent*)event;
+@property BOOL showEventsOnClockFace;
+
+- (void)setupTouchBarItem;
+- (void)loadPreferences;
+- (void)updateLaunchOnLogin;
+- (void)updateShowMenuBarItem;
+- (void)updateClockView;
+
+- (void)requestUpdateOfCalendarItems;
+- (void)updateCalendarItems;
+- (void)openEventInCalendar:(EKEvent*)event;
 
 @end
 
@@ -49,8 +56,6 @@ static const NSTouchBarItemIdentifier kEventIdentifier = @"ns.clock.event";
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
     [[[[NSApplication sharedApplication] windows] lastObject] close];
     
-    DFRSystemModalShowsCloseBoxWhenFrontMost(YES);
-    
     _dateFormatter = [[NSDateFormatter alloc] init];
     _dateFormatter.dateStyle = NSDateFormatterFullStyle;
     _dateFormatter.dateFormat = @"yyyy-MM-dd";
@@ -59,16 +64,33 @@ static const NSTouchBarItemIdentifier kEventIdentifier = @"ns.clock.event";
     _timeFormatter.timeStyle = NSDateFormatterShortStyle;
     _timeFormatter.dateFormat = @"HH:mm";
     
-    NSClickGestureRecognizer *const press =
-    [[NSClickGestureRecognizer alloc] initWithTarget:self
-                                              action:@selector(onPressed:)];
+    NSDictionary *defaults = @{
+        kPrefLaunchOnLogin: @false,
+        kPrefShowMenuBarItem: @true,
+        kPrefShowSecondHand: @false,
+        kPrefShowEventsOnClockFace: @false
+    };
+    
+    [[NSUserDefaults standardUserDefaults] registerDefaults:defaults];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(loadPreferences)
+                                                 name:NSUserDefaultsDidChangeNotification
+                                               object:nil];
+    [self setupTouchBarItem];
+    [self loadPreferences];
+    [self updateTime];
+}
+
+- (void) setupTouchBarItem {
+    NSClickGestureRecognizer *const press = [[NSClickGestureRecognizer alloc] initWithTarget:self
+                                                                                      action:@selector(onPressed:)];
     press.buttonMask = 0x1;
     press.allowedTouchTypes = NSTouchTypeMaskDirect;
     press.numberOfTouchesRequired = 1;
     
-    NSPressGestureRecognizer *const longPress =
-    [[NSPressGestureRecognizer alloc] initWithTarget:self
-                                              action:@selector(onLongPressed:)];
+    NSPressGestureRecognizer *const longPress = [[NSPressGestureRecognizer alloc] initWithTarget:self
+                                                                                          action:@selector(onLongPressed:)];
     longPress.buttonMask = 0x1;
     longPress.allowedTouchTypes = NSTouchTypeMaskDirect;
     longPress.minimumPressDuration = 0.5;
@@ -77,7 +99,7 @@ static const NSTouchBarItemIdentifier kEventIdentifier = @"ns.clock.event";
     _clockIcon = [[ClockView alloc] initWithFrame:NSZeroRect];
     _clockIcon.date = [NSDate date];
     _clockIcon.color = [NSColor whiteColor];
-    _clockIcon.showSecondHand = [[NSUserDefaults standardUserDefaults] boolForKey:@"show_second_hand"];
+    _clockIcon.showSecondHand = [[NSUserDefaults standardUserDefaults] boolForKey:kPrefShowSecondHand];
     [_clockIcon addGestureRecognizer:press];
     [_clockIcon addGestureRecognizer:longPress];
     
@@ -85,22 +107,17 @@ static const NSTouchBarItemIdentifier kEventIdentifier = @"ns.clock.event";
     time.view = _clockIcon;
 
     [NSTouchBarItem addSystemTrayItem:time];
+    DFRSystemModalShowsCloseBoxWhenFrontMost(YES);
     DFRElementSetControlStripPresenceForIdentifier(kClockIdentifier, YES);
+}
 
-//    https://developer.apple.com/documentation/eventkit/ekeventstore/1507547-requestaccesstoentitytype?language=objc
-    
-    [self enableLoginAutostart];
-    
-    [self updateTime];
+- (void) loadPreferences {
+    [self updateLaunchOnLogin];
+    [self updateShowMenuBarItem];
+    [self updateClockView];
 }
 
 - (void)awakeFromNib {
-    bool hideStatusBar = [[NSUserDefaults standardUserDefaults] objectForKey:@"hide_status_bar"] != nil
-        ? [[NSUserDefaults standardUserDefaults] boolForKey:@"hide_status_bar"]
-        : NO;
-
-    [self hideMenuBar:hideStatusBar];
-    
     [_eventScrubber registerClass:[ScrubberEventItemView class] forItemIdentifier:kEventIdentifier];
     
     [self requestUpdateOfCalendarItems];
@@ -163,37 +180,46 @@ static const NSTouchBarItemIdentifier kEventIdentifier = @"ns.clock.event";
     }];
     
     _events = events;
+    
+    [self.eventScrubber reloadData];
 }
 
-- (void)setupStatusBarItem {
+- (void)updateShowMenuBarItem {
+    const bool enabled = [[NSUserDefaults standardUserDefaults] boolForKey:kPrefShowMenuBarItem];
+    
+    if (enabled && self.statusBar)
+        return;
+    
+    if (!enabled) {
+        self.statusBar = nil;
+        return;
+    }
+    
     self.statusBar = [[NSStatusBar systemStatusBar] statusItemWithLength:NSSquareStatusItemLength];
     self.statusBar.menu = self.statusMenu;
-    
-    NSImage *statusImage = [self statusBarImage];
-    
+
+    NSImage *statusImage = [NSImage imageNamed:NSImageNameApplicationIcon];
     statusImage.size = NSMakeSize(18, 18);
     statusImage.template = YES;
-    
-    self.statusBar.image = statusImage;
+
+    self.statusBar.button.image = statusImage;
     self.statusBar.highlightMode = YES;
-    self.statusBar.enabled = YES;
+    self.statusBar.button.enabled = YES;
 }
 
-
-- (void)hideMenuBar:(BOOL)enableState {
-    if (!enableState) {
-        [self setupStatusBarItem];
-    } else {
-        self.statusBar = nil;
+- (void)updateLaunchOnLogin {
+    const BOOL state = [[NSUserDefaults standardUserDefaults] boolForKey:kPrefLaunchOnLogin];
+    if (!SMLoginItemSetEnabled((__bridge CFStringRef)@"com.github.jelmervdl.Clock-Bar-Launcher", !state)) {
+        NSLog(@"Could not (de)register the login item");
     }
 }
 
-- (bool)showSecondHand {
-    return _clockIcon.showSecondHand;
-}
-
-- (void)setShowSecondHand:(bool)showSecondHand {
-    _clockIcon.showSecondHand = showSecondHand;
+- (void)updateClockView {
+    _clockIcon.showSecondHand = [[NSUserDefaults standardUserDefaults] boolForKey:kPrefShowSecondHand];
+    _clockIcon.showEventBackground = true;
+    _clockIcon.showEventOutline = false;
+    
+    _showEventsOnClockFace = [[NSUserDefaults standardUserDefaults] boolForKey:kPrefShowEventsOnClockFace];
     
     // Reschedule updateTime to take the new frequency into account
     [self updateTime];
@@ -207,7 +233,7 @@ static const NSTouchBarItemIdentifier kEventIdentifier = @"ns.clock.event";
     // Do the update
     NSDate *const now = [NSDate date];
     _clockIcon.date = now;
-    _clockIcon.events = _events;
+    _clockIcon.events = _showEventsOnClockFace ? _events : nil;
     
     // Also update the touch bar buttons if they're visible
     if (self.touchBar.isVisible) {
@@ -216,7 +242,7 @@ static const NSTouchBarItemIdentifier kEventIdentifier = @"ns.clock.event";
         self.timeButton.title = [_timeFormatter stringFromDate:now];
     }
     
-    bool updateEverySecond = self.showSecondHand || self.touchBar.isVisible;
+    bool updateEverySecond = self.clockView.showSecondHand || self.touchBar.isVisible;
     
     // schedule efficient update
     NSCalendar *const calendar = [NSCalendar currentCalendar];
@@ -235,27 +261,9 @@ static const NSTouchBarItemIdentifier kEventIdentifier = @"ns.clock.event";
                    _update);
 }
 
-- (NSImage *)statusBarImage {
-    return [NSImage imageNamed:@"clock-64"];
-}
-
-- (void)enableLoginAutostart {
-    if ([[NSUserDefaults standardUserDefaults] objectForKey:@"auto_login"] == nil) {
-        return;
-    }
-    
-    const BOOL state = [[NSUserDefaults standardUserDefaults] boolForKey:@"auto_login"];
-    if (!SMLoginItemSetEnabled((__bridge CFStringRef)@"info.averello.Clock-Launcher", !state)) {
-        NSLog(@"The login was not succesfull");
-    }
-}
-
 - (void)presentTouchBar:(id)sender {
-    if (@available(macOS 10.14, *)) {
-        [NSTouchBar presentSystemModalTouchBar:self.touchBar systemTrayItemIdentifier:kClockIdentifier];
-    } else {
-        [NSTouchBar presentSystemModalFunctionBar:self.touchBar systemTrayItemIdentifier:kClockIdentifier];
-    }
+    [NSTouchBar presentSystemModalTouchBar:self.touchBar systemTrayItemIdentifier:kClockIdentifier];
+    
     [self updateTime];
 }
 
@@ -271,8 +279,7 @@ static const NSTouchBarItemIdentifier kEventIdentifier = @"ns.clock.event";
 }
 
 - (IBAction)prefsMenuItemAction:(id)sender {
-    [[[[NSApplication sharedApplication] windows] lastObject] makeKeyAndOrderFront:nil];
-    [[NSApplication sharedApplication] activateIgnoringOtherApps:YES];
+    [[NSNotificationCenter defaultCenter] postNotificationName:kEventShowPreferences object:sender];
 }
 
 - (IBAction)quitMenuItemAction:(id)sender {
@@ -336,7 +343,7 @@ void copyDateToPasteboard(NSDateFormatter *formatter) {
     
     // Build argument list
     NSAppleEventDescriptor *arguments = [[NSAppleEventDescriptor alloc] initListDescriptor];
-        
+    
     // First argument: event identifier
     [arguments insertDescriptor:[NSAppleEventDescriptor descriptorWithString:event.eventIdentifier] atIndex:1];
     

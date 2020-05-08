@@ -47,6 +47,24 @@
     }
 }
 
+@synthesize showEventBackground = _showEventBackground;
+
+- (void)setShowEventBackground:(BOOL)showEventBackground {
+    if (_showEventBackground != showEventBackground) {
+        _showEventBackground = showEventBackground;
+        [self setNeedsDisplay:YES];
+    }
+}
+
+@synthesize showEventOutline = _showEventOutline;
+
+- (void)setShowEventOutline:(BOOL)showEventOutline {
+    if (_showEventOutline != showEventOutline) {
+        _showEventOutline = showEventOutline;
+        [self setNeedsDisplay:YES];
+    }
+}
+
 @synthesize events = _events;
 
 double getHourHandFraction(NSDateComponents *dateComponents) {
@@ -119,7 +137,7 @@ double getSecondHandFraction(NSDateComponents *dateComponents) {
     NSBezierPath *path;
     
     // Draw event segment backgrounds
-    if (true) {
+    if (_showEventBackground && _events != nil) {
         for (EKEvent *event in _events) {
             [event.calendar.color setFill];
             [[event.calendar.color blendedColorWithFraction:0.2 ofColor:[NSColor clearColor]] setFill];
@@ -139,7 +157,7 @@ double getSecondHandFraction(NSDateComponents *dateComponents) {
     [path stroke];
     
     // Draw event segment outlines
-    if (false) {
+    if (_showEventOutline && _events != nil) {
         for (EKEvent *event in _events) {
             [event.calendar.color setStroke];
             path = [NSBezierPath bezierPath];

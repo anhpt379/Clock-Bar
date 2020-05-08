@@ -20,6 +20,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic) BOOL showSecondHand;
 
+@property (nonatomic) BOOL showEventBackground;
+
+@property (nonatomic) BOOL showEventOutline;
+
 - (void)setDate:(NSDate *)date;
 
 @end

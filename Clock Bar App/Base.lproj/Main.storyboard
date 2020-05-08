@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="16096" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
-        <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaDFRPlugin" version="16002"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="16096"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -800,7 +799,7 @@
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                                 <connections>
-                                    <action selector="onLoginStartChanged:" target="XfG-lQ-9wD" id="57j-16-wLE"/>
+                                    <binding destination="qn4-k9-216" name="value" keyPath="values.auto_login" id="EYj-9a-7Ja"/>
                                 </connections>
                             </button>
                             <box verticalHuggingPriority="750" fixedFrame="YES" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="Dc9-Xu-cYw">
@@ -815,7 +814,7 @@
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                                 <connections>
-                                    <action selector="quitPressed:" target="XfG-lQ-9wD" id="nGB-Gp-XJh"/>
+                                    <action selector="quitPressed:" target="XfG-lQ-9wD" id="KtG-Sq-dS2"/>
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="UhA-eV-vsx">
@@ -834,7 +833,11 @@
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                                 <connections>
-                                    <action selector="showMenuBarChanged:" target="XfG-lQ-9wD" id="80Y-jW-1qx"/>
+                                    <binding destination="qn4-k9-216" name="value" keyPath="values.show_menu_bar_item" id="kan-wG-Rmv">
+                                        <dictionary key="options">
+                                            <string key="NSValueTransformerName">NSNegateBoolean</string>
+                                        </dictionary>
+                                    </binding>
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="KFc-rF-qxc">
@@ -845,20 +848,27 @@
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                                 <connections>
-                                    <action selector="showSecondHandChanged:" target="XfG-lQ-9wD" id="laz-mm-Za8"/>
+                                    <binding destination="qn4-k9-216" name="value" keyPath="values.show_second_hand" id="mF2-wV-gnN"/>
+                                </connections>
+                            </button>
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="JTv-gL-cl8">
+                                <rect key="frame" x="18" y="180" width="345" height="18"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="check" title="Show events on clock face" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="CPf-fm-vbc">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <binding destination="qn4-k9-216" name="value" keyPath="values.show_events_on_clock_face" id="daJ-he-cFD"/>
                                 </connections>
                             </button>
                         </subviews>
                     </view>
-                    <connections>
-                        <outlet property="autoLoginState" destination="hvj-7s-TwY" id="adQ-vO-ZXg"/>
-                        <outlet property="showInMenuBarState" destination="03l-eq-BdN" id="dNu-RU-PeR"/>
-                        <outlet property="showSecondHandState" destination="KFc-rF-qxc" id="Wrb-On-daZ"/>
-                    </connections>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+                <userDefaultsController representsSharedInstance="YES" id="qn4-k9-216"/>
             </objects>
-            <point key="canvasLocation" x="75" y="658.5"/>
+            <point key="canvasLocation" x="74" y="786"/>
         </scene>
     </scenes>
     <resources>

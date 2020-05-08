@@ -30,13 +30,5 @@
 
 - (IBAction)copyTime:(id)sender;
 
-- (bool)showSecondHand;
-
-- (void)setShowSecondHand:(bool)state;
-
-- (void)hideMenuBar:(BOOL)enableState;
-
-- (void)requestUpdateOfCalendarItems;
-
 @end
 

@@ -1,9 +1,12 @@
+//
+//  AppDelegate.m
+//  Clock Bar Launcher
+//
+//  Created by Jelmer van der Linde on 08/05/2020.
+//  Copyright © 2020 Nihalsharma. All rights reserved.
+//
+
 #import "AppDelegate.h"
-
-
-@interface AppDelegate ()
-
-@end
 
 @implementation AppDelegate
 
@@ -15,11 +18,6 @@
                         stringByDeletingLastPathComponent];
     [[NSWorkspace sharedWorkspace] launchApplication:path];
     [NSApp terminate:nil];
-}
-
-
-- (void)applicationWillTerminate:(NSNotification *)aNotification {
-    // Insert code here to tear down your application
 }
 
 @end

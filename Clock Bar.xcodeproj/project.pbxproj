@@ -18,25 +18,20 @@
 		C1056BC224530F770054C59F /* calendar.js in Resources */ = {isa = PBXBuildFile; fileRef = C1056BC124530F770054C59F /* calendar.js */; };
 		C1056BC424534FA50054C59F /* EventKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C1056BC324534FA50054C59F /* EventKit.framework */; };
 		C12EF358245B86F6002E7017 /* ScrubberEventItemView.m in Sources */ = {isa = PBXBuildFile; fileRef = C12EF357245B86F6002E7017 /* ScrubberEventItemView.m */; };
-		D53E002C2054A19A001625A6 /* clock-64.png in Resources */ = {isa = PBXBuildFile; fileRef = D53E002B2054A19A001625A6 /* clock-64.png */; };
-		D5A462752054B17B00E8B47E /* Clock Launcher.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = D5A462652054B06B00E8B47E /* Clock Launcher.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		DE0A9D0E21BDB33B004A5BF9 /* ClickableTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = DE0A9D0D21BDB33B004A5BF9 /* ClickableTextField.m */; };
+		C1F76DC524655CF100AC9386 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = C1F76DC424655CF100AC9386 /* AppDelegate.m */; };
+		C1F76DCD24655CF300AC9386 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = C1F76DCC24655CF300AC9386 /* main.m */; };
+		C1F76DD224655D8800AC9386 /* Clock Bar Launcher.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = C1F76DC124655CF100AC9386 /* Clock Bar Launcher.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		C1F76DD724656A9D00AC9386 /* AppConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = C1F76DD624656A9D00AC9386 /* AppConstants.m */; };
+		C1F76DD824656A9D00AC9386 /* AppConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = C1F76DD624656A9D00AC9386 /* AppConstants.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		D5A462642054B06B00E8B47E /* PBXContainerItemProxy */ = {
+		C1F76DD324655DA500AC9386 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = D5A462602054B06B00E8B47E /* Clock Launcher.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 11B86E751EDEAC970069D254;
-			remoteInfo = "Clock Launcher";
-		};
-		D5A462732054B17500E8B47E /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = D5A462602054B06B00E8B47E /* Clock Launcher.xcodeproj */;
+			containerPortal = 11B86E451EDE9B4C0069D254 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 11B86E741EDEAC970069D254;
-			remoteInfo = "Clock Launcher";
+			remoteGlobalIDString = C1F76DC024655CF100AC9386;
+			remoteInfo = "Clock Bar Launcher";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -47,7 +42,7 @@
 			dstPath = Contents/Library/LoginItems;
 			dstSubfolderSpec = 1;
 			files = (
-				D5A462752054B17B00E8B47E /* Clock Launcher.app in CopyFiles */,
+				C1F76DD224655D8800AC9386 /* Clock Bar Launcher.app in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -73,11 +68,16 @@
 		C1056BC324534FA50054C59F /* EventKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = EventKit.framework; path = System/Library/Frameworks/EventKit.framework; sourceTree = SDKROOT; };
 		C12EF356245B86F6002E7017 /* ScrubberEventItemView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScrubberEventItemView.h; sourceTree = "<group>"; };
 		C12EF357245B86F6002E7017 /* ScrubberEventItemView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScrubberEventItemView.m; sourceTree = "<group>"; };
+		C1F76DC124655CF100AC9386 /* Clock Bar Launcher.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Clock Bar Launcher.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		C1F76DC324655CF100AC9386 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		C1F76DC424655CF100AC9386 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		C1F76DCB24655CF300AC9386 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C1F76DCC24655CF300AC9386 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		C1F76DCE24655CF300AC9386 /* Clock_Bar_Launcher.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Clock_Bar_Launcher.entitlements; sourceTree = "<group>"; };
+		C1F76DD524656A8500AC9386 /* AppConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppConstants.h; sourceTree = "<group>"; };
+		C1F76DD624656A9D00AC9386 /* AppConstants.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppConstants.m; sourceTree = "<group>"; };
 		D53C8A03205510EF00EAAA3D /* Clock Bar.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Clock Bar.entitlements"; sourceTree = "<group>"; };
 		D53E002B2054A19A001625A6 /* clock-64.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "clock-64.png"; sourceTree = "<group>"; };
-		D5A462602054B06B00E8B47E /* Clock Launcher.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "Clock Launcher.xcodeproj"; path = "Clock Bar App/Clock Launcher/Clock Launcher.xcodeproj"; sourceTree = "<group>"; };
-		DE0A9D0C21BDB33B004A5BF9 /* ClickableTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClickableTextField.h; sourceTree = "<group>"; };
-		DE0A9D0D21BDB33B004A5BF9 /* ClickableTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClickableTextField.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -91,6 +91,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C1F76DBE24655CF100AC9386 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -98,10 +105,11 @@
 			isa = PBXGroup;
 			children = (
 				D53C8A03205510EF00EAAA3D /* Clock Bar.entitlements */,
-				D5A462602054B06B00E8B47E /* Clock Launcher.xcodeproj */,
+				11B86E591EDE9B4D0069D254 /* Assets.xcassets */,
 				D53E002B2054A19A001625A6 /* clock-64.png */,
 				5D4763251F0562F2005E8DB0 /* Graphics */,
 				11B86E4F1EDE9B4D0069D254 /* Clock Bar App */,
+				C1F76DC224655CF100AC9386 /* Clock Bar Launcher */,
 				11B86E4E1EDE9B4D0069D254 /* Products */,
 				11B86E641EDE9BD00069D254 /* Frameworks */,
 			);
@@ -111,6 +119,7 @@
 			isa = PBXGroup;
 			children = (
 				11B86E4D1EDE9B4D0069D254 /* Clock Bar.app */,
+				C1F76DC124655CF100AC9386 /* Clock Bar Launcher.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -122,9 +131,6 @@
 				11B86E511EDE9B4D0069D254 /* AppDelegate.m */,
 				11B86E561EDE9B4D0069D254 /* ViewController.h */,
 				11B86E571EDE9B4D0069D254 /* ViewController.m */,
-				DE0A9D0C21BDB33B004A5BF9 /* ClickableTextField.h */,
-				DE0A9D0D21BDB33B004A5BF9 /* ClickableTextField.m */,
-				11B86E591EDE9B4D0069D254 /* Assets.xcassets */,
 				11B86E5B1EDE9B4D0069D254 /* Main.storyboard */,
 				11B86E5E1EDE9B4D0069D254 /* Info.plist */,
 				11B86E531EDE9B4D0069D254 /* Supporting Files */,
@@ -135,6 +141,8 @@
 				C1056BC124530F770054C59F /* calendar.js */,
 				C12EF356245B86F6002E7017 /* ScrubberEventItemView.h */,
 				C12EF357245B86F6002E7017 /* ScrubberEventItemView.m */,
+				C1F76DD524656A8500AC9386 /* AppConstants.h */,
+				C1F76DD624656A9D00AC9386 /* AppConstants.m */,
 			);
 			path = "Clock Bar App";
 			sourceTree = "<group>";
@@ -164,12 +172,16 @@
 			name = Graphics;
 			sourceTree = "<group>";
 		};
-		D5A462612054B06B00E8B47E /* Products */ = {
+		C1F76DC224655CF100AC9386 /* Clock Bar Launcher */ = {
 			isa = PBXGroup;
 			children = (
-				D5A462652054B06B00E8B47E /* Clock Launcher.app */,
+				C1F76DC324655CF100AC9386 /* AppDelegate.h */,
+				C1F76DC424655CF100AC9386 /* AppDelegate.m */,
+				C1F76DCB24655CF300AC9386 /* Info.plist */,
+				C1F76DCC24655CF300AC9386 /* main.m */,
+				C1F76DCE24655CF300AC9386 /* Clock_Bar_Launcher.entitlements */,
 			);
-			name = Products;
+			path = "Clock Bar Launcher";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -187,11 +199,28 @@
 			buildRules = (
 			);
 			dependencies = (
-				D5A462742054B17500E8B47E /* PBXTargetDependency */,
+				C1F76DD424655DA500AC9386 /* PBXTargetDependency */,
 			);
 			name = "Clock Bar";
 			productName = "Mute Me Now";
 			productReference = 11B86E4D1EDE9B4D0069D254 /* Clock Bar.app */;
+			productType = "com.apple.product-type.application";
+		};
+		C1F76DC024655CF100AC9386 /* Clock Bar Launcher */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C1F76DCF24655CF300AC9386 /* Build configuration list for PBXNativeTarget "Clock Bar Launcher" */;
+			buildPhases = (
+				C1F76DBD24655CF100AC9386 /* Sources */,
+				C1F76DBE24655CF100AC9386 /* Frameworks */,
+				C1F76DBF24655CF100AC9386 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Clock Bar Launcher";
+			productName = "Clock Bar Launcher";
+			productReference = C1F76DC124655CF100AC9386 /* Clock Bar Launcher.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -200,7 +229,7 @@
 		11B86E451EDE9B4C0069D254 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1010;
+				LastUpgradeCheck = 1140;
 				ORGANIZATIONNAME = Nihalsharma;
 				TargetAttributes = {
 					11B86E4C1EDE9B4D0069D254 = {
@@ -210,6 +239,9 @@
 								enabled = 1;
 							};
 						};
+					};
+					C1F76DC024655CF100AC9386 = {
+						CreatedOnToolsVersion = 11.4.1;
 					};
 				};
 			};
@@ -225,28 +257,13 @@
 			mainGroup = 11B86E441EDE9B4C0069D254;
 			productRefGroup = 11B86E4E1EDE9B4D0069D254 /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = D5A462612054B06B00E8B47E /* Products */;
-					ProjectRef = D5A462602054B06B00E8B47E /* Clock Launcher.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				11B86E4C1EDE9B4D0069D254 /* Clock Bar */,
+				C1F76DC024655CF100AC9386 /* Clock Bar Launcher */,
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		D5A462652054B06B00E8B47E /* Clock Launcher.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = "Clock Launcher.app";
-			remoteRef = D5A462642054B06B00E8B47E /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		11B86E4B1EDE9B4D0069D254 /* Resources */ = {
@@ -254,9 +271,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				C1056BC224530F770054C59F /* calendar.js in Resources */,
-				D53E002C2054A19A001625A6 /* clock-64.png in Resources */,
 				11B86E5A1EDE9B4D0069D254 /* Assets.xcassets in Resources */,
 				11B86E5D1EDE9B4D0069D254 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C1F76DBF24655CF100AC9386 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -270,19 +293,29 @@
 				11B86E581EDE9B4D0069D254 /* ViewController.m in Sources */,
 				C102FB6E245201D5001716D9 /* ClockView.m in Sources */,
 				11B86E551EDE9B4D0069D254 /* main.m in Sources */,
-				DE0A9D0E21BDB33B004A5BF9 /* ClickableTextField.m in Sources */,
+				C1F76DD724656A9D00AC9386 /* AppConstants.m in Sources */,
 				C12EF358245B86F6002E7017 /* ScrubberEventItemView.m in Sources */,
 				11B86E521EDE9B4D0069D254 /* AppDelegate.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C1F76DBD24655CF100AC9386 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C1F76DD824656A9D00AC9386 /* AppConstants.m in Sources */,
+				C1F76DCD24655CF300AC9386 /* main.m in Sources */,
+				C1F76DC524655CF100AC9386 /* AppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		D5A462742054B17500E8B47E /* PBXTargetDependency */ = {
+		C1F76DD424655DA500AC9386 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = "Clock Launcher";
-			targetProxy = D5A462732054B17500E8B47E /* PBXContainerItemProxy */;
+			target = C1F76DC024655CF100AC9386 /* Clock Bar Launcher */;
+			targetProxy = C1F76DD324655DA500AC9386 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -303,6 +336,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_GCD_PERFORMANCE = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_ANALYZER_SECURITY_FLOATLOOPCOUNTER = YES;
@@ -372,7 +406,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
@@ -385,6 +419,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_GCD_PERFORMANCE = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_ANALYZER_SECURITY_FLOATLOOPCOUNTER = YES;
@@ -448,7 +483,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
 				VALID_ARCHS = x86_64;
@@ -464,13 +499,15 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 6NY6HVA6J2;
+				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks",
 				);
 				INFOPLIST_FILE = "Clock Bar App/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "info.averello.clock-bar";
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.github.jelmervdl.Clock-Bar";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 			};
@@ -485,15 +522,82 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 6NY6HVA6J2;
+				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks",
 				);
 				INFOPLIST_FILE = "Clock Bar App/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "info.averello.clock-bar";
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.github.jelmervdl.Clock-Bar";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+			};
+			name = Release;
+		};
+		C1F76DD024655CF300AC9386 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_ENTITLEMENTS = "Clock Bar Launcher/Clock_Bar_Launcher.entitlements";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 6NY6HVA6J2;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				INFOPLIST_FILE = "Clock Bar Launcher/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.github.jelmervdl.Clock-Bar-Launcher";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		C1F76DD124655CF300AC9386 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_ENTITLEMENTS = "Clock Bar Launcher/Clock_Bar_Launcher.entitlements";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 6NY6HVA6J2;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				INFOPLIST_FILE = "Clock Bar Launcher/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.github.jelmervdl.Clock-Bar-Launcher";
+				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};
@@ -514,6 +618,15 @@
 			buildConfigurations = (
 				11B86E621EDE9B4D0069D254 /* Debug */,
 				11B86E631EDE9B4D0069D254 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C1F76DCF24655CF300AC9386 /* Build configuration list for PBXNativeTarget "Clock Bar Launcher" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C1F76DD024655CF300AC9386 /* Debug */,
+				C1F76DD124655CF300AC9386 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
