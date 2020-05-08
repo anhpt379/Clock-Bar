@@ -37,6 +37,7 @@
 - (void)updateClockView;
 
 - (void)requestUpdateOfCalendarItems;
+- (void)setupCalendarItems;
 - (void)updateCalendarItems;
 - (void)openEventInCalendar:(EKEvent*)event;
 
@@ -130,7 +131,7 @@
         case EKAuthorizationStatusAuthorized:
             NSLog(@"We're good");
             _eventStore = [[EKEventStore alloc] init];
-            [self updateCalendarItems];
+            [self setupCalendarItems];
             break;
             
         case EKAuthorizationStatusDenied:
@@ -148,11 +149,19 @@
                 NSLog(@"Granted? %d or %@", granted, error);
                 if (granted) {
                     self.eventStore = [self.eventStore init];
-                    [self updateCalendarItems];
+                    [self setupCalendarItems];
                 }
             }];
             break;
     }
+}
+
+- (void)setupCalendarItems {
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(updateCalendarItems)
+                                                 name:EKEventStoreChangedNotification
+                                               object:_eventStore];
+    [self updateCalendarItems];
 }
 
 - (void)updateCalendarItems {
