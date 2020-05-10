@@ -194,7 +194,7 @@
 }
 
 - (void)updateShowMenuBarItem {
-    const bool enabled = [[NSUserDefaults standardUserDefaults] boolForKey:kPrefShowMenuBarItem];
+    const BOOL enabled = [[NSUserDefaults standardUserDefaults] boolForKey:kPrefShowMenuBarItem];
     
     if (enabled && self.statusBar)
         return;
@@ -218,7 +218,7 @@
 
 - (void)updateLaunchOnLogin {
     const BOOL state = [[NSUserDefaults standardUserDefaults] boolForKey:kPrefLaunchOnLogin];
-    if (!SMLoginItemSetEnabled((__bridge CFStringRef)@"com.github.jelmervdl.Clock-Bar-Launcher", !state)) {
+    if (!SMLoginItemSetEnabled((__bridge CFStringRef)@"com.github.jelmervdl.Clock-Bar-Launcher", state ? TRUE : FALSE)) {
         NSLog(@"Could not (de)register the login item");
     }
 }
@@ -251,7 +251,7 @@
         self.timeButton.title = [_timeFormatter stringFromDate:now];
     }
     
-    bool updateEverySecond = self.clockView.showSecondHand || self.touchBar.isVisible;
+    BOOL updateEverySecond = self.clockView.showSecondHand || self.touchBar.isVisible;
     
     // schedule efficient update
     NSCalendar *const calendar = [NSCalendar currentCalendar];
