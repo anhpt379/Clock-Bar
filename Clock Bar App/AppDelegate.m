@@ -37,7 +37,7 @@
 - (void)updateClockView;
 
 - (void)requestUpdateOfCalendarItems;
-- (void)setupCalendarItems;
+- (void)setupCalendarItems:(NSNotification*)notification;
 - (void)updateCalendarItems;
 - (void)openEventInCalendar:(EKEvent*)event;
 
@@ -55,7 +55,7 @@
 @synthesize statusBar;
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
-    [[[[NSApplication sharedApplication] windows] lastObject] close];
+//    [[[[NSApplication sharedApplication] windows] lastObject] close];
     
     _dateFormatter = [[NSDateFormatter alloc] init];
     _dateFormatter.dateStyle = NSDateFormatterFullStyle;
@@ -78,14 +78,21 @@
                                              selector:@selector(loadPreferences)
                                                  name:NSUserDefaultsDidChangeNotification
                                                object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(setupCalendarItems:)
+                                                 name:kEventInitEventStore
+                                               object:nil];
+    
     [self setupTouchBarItem];
+    [self requestUpdateOfCalendarItems];
     [self loadPreferences];
     [self updateTime];
 }
 
 - (void) setupTouchBarItem {
     NSClickGestureRecognizer *const press = [[NSClickGestureRecognizer alloc] initWithTarget:self
-                                                                                      action:@selector(onPressed:)];
+                                                                                      action:@selector(presentTouchBar:)];
     press.buttonMask = 0x1;
     press.allowedTouchTypes = NSTouchTypeMaskDirect;
     press.numberOfTouchesRequired = 1;
@@ -108,7 +115,6 @@
     time.view = _clockIcon;
 
     [NSTouchBarItem addSystemTrayItem:time];
-    DFRSystemModalShowsCloseBoxWhenFrontMost(YES);
     DFRElementSetControlStripPresenceForIdentifier(kClockIdentifier, YES);
 }
 
@@ -116,12 +122,11 @@
     [self updateLaunchOnLogin];
     [self updateShowMenuBarItem];
     [self updateClockView];
+    [self updateCalendarItems];
 }
 
 - (void)awakeFromNib {
     [_eventScrubber registerClass:[ScrubberEventItemView class] forItemIdentifier:kEventIdentifier];
-    
-    [self requestUpdateOfCalendarItems];
     
     [super awakeFromNib];
 }
@@ -130,8 +135,9 @@
     switch ([EKEventStore authorizationStatusForEntityType:EKEntityTypeEvent]) {
         case EKAuthorizationStatusAuthorized:
             NSLog(@"We're good");
-            _eventStore = [[EKEventStore alloc] init];
-            [self setupCalendarItems];
+            [[NSNotificationCenter defaultCenter] postNotificationName:kEventInitEventStore
+                                                                object:self
+                                                              userInfo:@{@"eventStore": [[EKEventStore alloc] init]}];
             break;
             
         case EKAuthorizationStatusDenied:
@@ -144,33 +150,41 @@
             
         case EKAuthorizationStatusNotDetermined:
             NSLog(@"Undetermined");
-            _eventStore = [EKEventStore alloc];
-            [_eventStore requestAccessToEntityType:EKEntityTypeEvent completion:^(BOOL granted, NSError * _Nullable error) {
+            EKEventStore *eventStore = [EKEventStore alloc];
+            [eventStore requestAccessToEntityType:EKEntityTypeEvent completion:^(BOOL granted, NSError * _Nullable error) {
                 NSLog(@"Granted? %d or %@", granted, error);
                 if (granted) {
-                    self.eventStore = [self.eventStore init];
-                    [self setupCalendarItems];
+                    [[eventStore init] reset];
+                    [[NSNotificationCenter defaultCenter] postNotificationName:kEventInitEventStore
+                                                                        object:self
+                                                                      userInfo:@{@"eventStore": eventStore}];
                 }
             }];
             break;
     }
 }
 
-- (void)setupCalendarItems {
+- (void)setupCalendarItems:(NSNotification *)notification {
+    self.eventStore = [[notification userInfo] objectForKey:@"eventStore"];
+    
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(updateCalendarItems)
                                                  name:EKEventStoreChangedNotification
-                                               object:_eventStore];
+                                               object:self.eventStore];
     [self updateCalendarItems];
 }
 
 - (void)updateCalendarItems {
-    [_eventStore reset];
+    if (_eventStore == nil)
+        return;
+    
     NSArray *calendars = [_eventStore calendarsForEntityType:EKEntityTypeEvent];
     
-    calendars = [calendars filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(EKCalendar *calendar, NSDictionary<NSString *,id> *bindings) {
-        return true; // TODO only show selected calendars
-    }]];
+    NSArray<NSString*> *enabledCalendars = [[NSUserDefaults standardUserDefaults] stringArrayForKey:kPrefCalendars];
+    if (enabledCalendars != nil)
+        calendars = [calendars filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(EKCalendar *calendar, NSDictionary<NSString *,id> *bindings) {
+            return [enabledCalendars containsObject:calendar.calendarIdentifier];
+        }]];
     
     // Give me all events of today
     NSDate *now = [NSDate date];
@@ -274,11 +288,6 @@
     [NSTouchBar presentSystemModalTouchBar:self.touchBar systemTrayItemIdentifier:kClockIdentifier];
     
     [self updateTime];
-}
-
-- (void)onPressed:(NSButton *)sender {
-    [self requestUpdateOfCalendarItems];
-    [self presentTouchBar:nil];
 }
 
 - (void)onLongPressed:(NSPressGestureRecognizer *)recognizer {

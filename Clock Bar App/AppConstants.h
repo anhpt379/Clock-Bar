@@ -17,6 +17,8 @@ extern NSString *const kEventIdentifier;
 
 extern NSString *const kEventShowPreferences;
 
+extern NSString *const kEventInitEventStore;
+
 extern NSString *const kPrefLaunchOnLogin;
 
 extern NSString *const kPrefShowMenuBarItem;
@@ -24,5 +26,7 @@ extern NSString *const kPrefShowMenuBarItem;
 extern NSString *const kPrefShowSecondHand;
 
 extern NSString *const kPrefShowEventsOnClockFace;
+
+extern NSString *const kPrefCalendars;
 
 #endif /* AppConstants_h */
