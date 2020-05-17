@@ -180,10 +180,12 @@
     
     NSArray *calendars = [_eventStore calendarsForEntityType:EKEntityTypeEvent];
     
-    NSArray<NSString*> *enabledCalendars = [[NSUserDefaults standardUserDefaults] stringArrayForKey:kPrefCalendars];
+    NSDictionary<NSString*,NSNumber*> *enabledCalendars = [[NSUserDefaults standardUserDefaults] dictionaryForKey:kPrefCalendars];
+    
     if (enabledCalendars != nil)
         calendars = [calendars filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(EKCalendar *calendar, NSDictionary<NSString *,id> *bindings) {
-            return [enabledCalendars containsObject:calendar.calendarIdentifier];
+            NSNumber* val = [enabledCalendars objectForKey:calendar.calendarIdentifier];
+            return val == nil || [val boolValue];
         }]];
     
     // Give me all events of today

@@ -116,15 +116,14 @@
         view = [outlineView makeViewWithIdentifier:@"HeaderCell" owner:self];
         view.textField.stringValue = [(NSDictionary*)item objectForKey:@"title"];
     } else if ([item isKindOfClass:[EKCalendar class]]) {
-        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-        NSArray<NSString*> *enabledCalendars = [defaults stringArrayForKey:kPrefCalendars];
+        NSDictionary<NSString*,NSNumber*> *enabledCalendars = [[NSUserDefaults standardUserDefaults] dictionaryForKey:kPrefCalendars];
+        NSNumber *val = enabledCalendars != nil ? enabledCalendars[[(EKCalendar*) item calendarIdentifier]] : nil;
         
         view = [outlineView makeViewWithIdentifier:@"DataCell" owner:self];
         NSButton *checkbox = (NSButton*)[view.subviews objectAtIndex:0];
+        
         checkbox.title = [(EKCalendar*) item title];
-        checkbox.state = enabledCalendars == nil || [enabledCalendars containsObject:[(EKCalendar*) item calendarIdentifier]] ? NSControlStateValueOn : NSControlStateValueOff;
-//        checkbox.image = [NSImage imageNamed:NSImageNameMobileMe];
-//        checkbox.image = [checkbox.image tint:[(EKCalendar*)item color]];
+        checkbox.state = val == nil || [val boolValue] ? NSControlStateValueOn : NSControlStateValueOff;
     }
     
     return view;
@@ -141,7 +140,11 @@
         return;
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSArray<NSString*> *enabledCalendars = [defaults stringArrayForKey:kPrefCalendars];
+    NSDictionary<NSString*,NSNumber*> *calendars = [defaults dictionaryForKey:kPrefCalendars];
+    NSMutableDictionary *enabledCalendars = calendars != nil ? [calendars mutableCopy] : [[NSMutableDictionary alloc] init];
+    enabledCalendars[[(EKCalendar*)item calendarIdentifier]] = @([(NSButton*)sender state] == NSControlStateValueOn);
+    [defaults setObject:enabledCalendars forKey:kPrefCalendars];
+}
     
     if (enabledCalendars == nil) {
         enabledCalendars = @[];
