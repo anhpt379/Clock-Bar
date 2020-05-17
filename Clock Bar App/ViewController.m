@@ -124,6 +124,10 @@
         
         checkbox.title = [(EKCalendar*) item title];
         checkbox.state = val == nil || [val boolValue] ? NSControlStateValueOn : NSControlStateValueOff;
+        
+        NSSize size = NSMakeSize(14,14);
+        checkbox.image = [self makeCheckboxImageWithSize:size color:[(EKCalendar*)item color] enabled:NO];
+        checkbox.alternateImage = [self makeCheckboxImageWithSize:size color:[(EKCalendar*)item color] enabled:YES];
     }
     
     return view;
@@ -145,22 +149,29 @@
     enabledCalendars[[(EKCalendar*)item calendarIdentifier]] = @([(NSButton*)sender state] == NSControlStateValueOn);
     [defaults setObject:enabledCalendars forKey:kPrefCalendars];
 }
+
+- (NSImage*) makeCheckboxImageWithSize:(NSSize)size color:(NSColor *)color enabled:(BOOL)enabled {
+    NSImage* background = [[NSImage alloc] initWithSize:size];
+    [background lockFocus];
+    [color set];
     
-    if (enabledCalendars == nil) {
-        enabledCalendars = @[];
-        for (NSDictionary* source in _eventSources)
-            for (EKCalendar* calendar in [source objectForKey:@"calendars"])
-                enabledCalendars = [enabledCalendars arrayByAddingObject:calendar.calendarIdentifier];
+    // Background
+    NSBezierPath* rect = [NSBezierPath bezierPathWithRoundedRect:NSMakeRect(1, 1, size.width-2, size.height-2) xRadius:2 yRadius:2];
+    [rect fill];
+    
+    // Slightly darker outline around background
+    [[color blendedColorWithFraction:0.2 ofColor:[NSColor blackColor]] set];
+    [rect setLineWidth:1];
+    [rect stroke];
+    
+    // Checkmark if enabeld (tinted white, TODO needs outline as well?)
+    if (enabled) {
+        [[[NSImage imageNamed:@"NSMenuOnStateTemplate"] tint:[NSColor whiteColor]]
+         drawInRect:NSMakeRect(3, 3, size.width - 5, size.height - 5)];
     }
     
-    if ([(NSButton*)sender state] == NSControlStateValueOn)
-        enabledCalendars = [enabledCalendars arrayByAddingObject:[(EKCalendar*)item calendarIdentifier]];
-    else
-        enabledCalendars = [enabledCalendars filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(NSString* identifier, id _) {
-            return ![identifier isEqualToString:[(EKCalendar*)item calendarIdentifier]];
-        }]];
-    
-    [defaults setObject:enabledCalendars forKey:kPrefCalendars];
+    [background unlockFocus];
+    return background;
 }
 
 @end
@@ -170,10 +181,11 @@
 - (NSImage *)tint:(NSColor*)color {
     NSImage *image = [self copy];
     [image lockFocus];
-    [color set];
+    [color setFill];
     NSRect rect = NSMakeRect(0, 0, image.size.width, image.size.height);
     NSRectFillUsingOperation(rect, NSCompositingOperationSourceAtop);
     [image unlockFocus];
+    [image setTemplate:NO];
     return image;
 }
 

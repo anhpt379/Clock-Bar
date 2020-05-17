@@ -25,4 +25,6 @@
 
 - (IBAction)calendarToggled:(id)sender;
 
+- (NSImage*)makeCheckboxImageWithSize:(NSSize)size color:(NSColor*)color enabled:(BOOL)enabled;
+
 @end
