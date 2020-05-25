@@ -1,7 +1,7 @@
 # Analogue Clock Bar
 Get an analogue clock right on the sweetest spot of the MacBook, on the touch bar. And optionally add little annotations showing upcoming calendar events.
 
-<img src="https://github.com/jelmervdl/Clock-Bar/raw/master/screenshot.png" width="1060" height="105" alt="Screenshot of Touch Bar with clock and events">
+<img src="https://github.com/jelmervdl/Clock-Bar/raw/master/screenshot.png" width="830" height="105" alt="Screenshot of Touch Bar with clock and events">
 
 <img src="https://github.com/jelmervdl/Clock-Bar/raw/master/screenshot-prefs.png" width="512" height="657" alt="Screenshot of Preferences window">
 
