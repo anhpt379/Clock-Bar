@@ -1,5 +1,9 @@
-# Clock Bar
+# Analogue Clock Bar
 Get an analogue clock right on the sweetest spot of the MacBook, on the touch bar. And optionally add little annotations showing upcoming calendar events.
+
+<img src="https://github.com/jelmervdl/Clock-Bar/raw/master/screenshot.png" width="1060" height="105" alt="Screenshot of Touch Bar with clock and events">
+
+<img src="https://github.com/jelmervdl/Clock-Bar/raw/master/screenshot-prefs.png" width="512" height="657" alt="Screenshot of Preferences window">
 
 ### Why
 The upper right corner seems the farthest place on the planet to look at. Full of menu items, but an area you really find it inconvenient. Touch bar has been so convenient for so many things that you want to have everything right there. Having the clock right on the touch bar save you from visiting the darkest corner and saves so much effort. Seriously!!! You will realise. ~ Nihal
@@ -15,8 +19,6 @@ Or, simply because you like to work full-screen while the menu bar is hidden, bu
 - Optional second hand
 
 ### Todo
-- Automatically update when calendar items change
-- Toggle calendars from the settings pane
 - Figure out how to jump to the correct calendar item when it is a recurring item
 - Somehow let you customize the touch bar using "wiggle mode"
 
@@ -28,8 +30,4 @@ Or, simply because you like to work full-screen while the menu bar is hidden, bu
 - Provide Pull Request
 
 ---
-Made by (Nihal Sharma)[https://github.com/nihalsharma/Clock-Bar], [Georges Boumis](https://github.com/averello/Clock-Bar), Jelmer van der Linde
-
-### Screens
-
-*todo*
+Made by [Nihal Sharma](https://github.com/nihalsharma/Clock-Bar), [Georges Boumis](https://github.com/averello/Clock-Bar), [Jelmer van der Linde](https://github.com/jelmervdl/Clock-Bar).
