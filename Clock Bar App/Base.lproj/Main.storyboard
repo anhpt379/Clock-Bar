@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="16096" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="16097" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaDFRPlugin" version="16002"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="16096"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="16097"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
         <capability name="the Touch Bar" minToolsVersion="8.1" minSystemVersion="10.12.2" requiredIntegratedClassName="NSTouchBar"/>
     </dependencies>
@@ -13,7 +13,6 @@
                 <customObject id="Ady-hI-5gd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
                 <customObject id="Voe-Tx-rLC" customClass="AppDelegate">
                     <connections>
-                        <outlet property="clockView" destination="mfh-KG-A2h" id="KF0-dJ-1AV"/>
                         <outlet property="dateButton" destination="7G9-C9-gqM" id="4DS-tJ-eBb"/>
                         <outlet property="eventScrubber" destination="sdX-pB-Efo" id="fT7-Wx-Vog"/>
                         <outlet property="statusMenu" destination="oLl-V1-4Ka" id="Xvk-NQ-7lL"/>
@@ -684,16 +683,6 @@
                 </menu>
                 <touchBar id="PVD-4j-8Da">
                     <touchBarItems>
-                        <touchBarItem id="vMN-sP-bxu">
-                            <viewController key="viewController" id="YYs-8j-wgW">
-                                <view key="view" translatesAutoresizingMaskIntoConstraints="NO" id="mfh-KG-A2h" customClass="ClockView">
-                                    <rect key="frame" x="0.0" y="0.0" width="241" height="30"/>
-                                    <userDefinedRuntimeAttributes>
-                                        <userDefinedRuntimeAttribute type="boolean" keyPath="showSecondHand" value="YES"/>
-                                    </userDefinedRuntimeAttributes>
-                                </view>
-                            </viewController>
-                        </touchBarItem>
                         <touchBarItem id="Ot2-lb-hbK">
                             <viewController key="viewController" id="Qgj-77-5jy">
                                 <button key="view" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="7G9-C9-gqM">
@@ -725,7 +714,7 @@
                         <touchBarItem id="rHs-pk-7nf">
                             <viewController key="viewController" id="4Br-bI-ieY">
                                 <scrubber key="view" mode="1" itemAlignment="1" showsAdditionalContentIndicators="YES" translatesAutoresizingMaskIntoConstraints="NO" id="sdX-pB-Efo">
-                                    <rect key="frame" x="0.0" y="0.0" width="241" height="30"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="489" height="30"/>
                                     <scrubberFlowLayout key="scrubberLayout" itemSpacing="1">
                                         <size key="itemSize" width="100" height="30"/>
                                     </scrubberFlowLayout>
@@ -932,6 +921,7 @@
                                             </connections>
                                         </outlineView>
                                     </subviews>
+                                    <nil key="backgroundColor"/>
                                 </clipView>
                                 <scroller key="horizontalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="J9I-il-waT">
                                     <rect key="frame" x="1" y="212" width="336" height="16"/>

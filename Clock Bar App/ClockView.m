@@ -92,12 +92,12 @@ double getSecondHandFraction(NSDateComponents *dateComponents) {
                                                 fromDate:event.endDate];
     [path appendBezierPathWithArcWithCenter:center
                                      radius:radius
-                                 startAngle:450 - 360 * getHourHandFraction(end)
-                                   endAngle:450 - 360 * getHourHandFraction(start)];
+                                 startAngle:360 * getHourHandFraction(start) - 90
+                                   endAngle:360 * getHourHandFraction(end) - 90];
 }
 
 - (NSBezierPath*)pathForHandAtFraction:(double)fraction withRadius:(double)radius atPosition:(NSPoint) center {
-    double rad = 2.0 * M_PI * fraction - 0.5 * M_PI;
+    double rad = 2.0 * M_PI * (1.0 - fraction) + 0.5 * M_PI;
     NSBezierPath *path = [NSBezierPath bezierPath];
     [path moveToPoint:center];
     [path relativeLineToPoint:NSMakePoint(cos(rad) * radius, -sin(rad) * radius)];
@@ -140,7 +140,7 @@ double getSecondHandFraction(NSDateComponents *dateComponents) {
     if (_showEventBackground && _events != nil) {
         for (EKEvent *event in _events) {
             [event.calendar.color setFill];
-            [[event.calendar.color blendedColorWithFraction:0.2 ofColor:[NSColor clearColor]] setFill];
+//            [[event.calendar.color blendedColorWithFraction:0.2 ofColor:[NSColor clearColor]] setFill];
             
             path = [NSBezierPath bezierPath];
             [path moveToPoint:center];

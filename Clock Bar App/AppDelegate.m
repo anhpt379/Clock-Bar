@@ -104,17 +104,17 @@
     longPress.minimumPressDuration = 0.5;
     longPress.numberOfTouchesRequired = 1;
     
-    _clockIcon = [[ClockView alloc] initWithFrame:NSZeroRect];
+    _clockIcon = [ClockView buttonWithTitle:@"" target:self action:@selector(presentTouchBar:)];
     _clockIcon.date = [NSDate date];
     _clockIcon.color = [NSColor whiteColor];
     _clockIcon.showSecondHand = [[NSUserDefaults standardUserDefaults] boolForKey:kPrefShowSecondHand];
-    [_clockIcon addGestureRecognizer:press];
     [_clockIcon addGestureRecognizer:longPress];
     
     NSCustomTouchBarItem *time = [[NSCustomTouchBarItem alloc] initWithIdentifier:kClockIdentifier];
     time.view = _clockIcon;
-
+    
     [NSTouchBarItem addSystemTrayItem:time];
+    DFRSystemModalShowsCloseBoxWhenFrontMost(YES);
     DFRElementSetControlStripPresenceForIdentifier(kClockIdentifier, YES);
 }
 
@@ -260,14 +260,14 @@
     _clockIcon.date = now;
     _clockIcon.events = _showEventsOnClockFace ? _events : nil;
     
+    
     // Also update the touch bar buttons if they're visible
     if (self.touchBar.isVisible) {
-        self.clockView.date = now;
         self.dateButton.title = [_dateFormatter stringFromDate:now];
         self.timeButton.title = [_timeFormatter stringFromDate:now];
     }
     
-    BOOL updateEverySecond = self.clockView.showSecondHand || self.touchBar.isVisible;
+    BOOL updateEverySecond = _clockIcon.showSecondHand || self.touchBar.isVisible;
     
     // schedule efficient update
     NSCalendar *const calendar = [NSCalendar currentCalendar];

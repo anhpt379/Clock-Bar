@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface ClockView : NSView
+@interface ClockView : NSButton
 
 @property (nonatomic, strong) NSDate *date;
 

@@ -12,7 +12,7 @@
 
 @property (nonatomic, strong) ClockView *clockIcon;
 
-@property (nonatomic, weak) IBOutlet ClockView *clockView;
+//@property (nonatomic, weak) IBOutlet ClockView *clockView;
 
 @property (nonatomic, weak) IBOutlet NSButton *dateButton;
 
