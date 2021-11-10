@@ -1,0 +1,41 @@
+name: Swift
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: macOS-latest
+
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Build
+      run: xcodebuild -workspace Clock\ Bar.xcworkspace -scheme Clock\ Bar CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED="NO" CODE_SIGN_ENTITLEMENTS="" CODE_SIGNING_ALLOWED="NO" EXCLUDED_ARCHS=arm64
+
+    - name: Zip up
+      run: |
+        cd /Users/runner/Library/Developer/Xcode/DerivedData/Clock_Bar-*/Build/Products/Debug/
+        zip -r "$GITHUB_WORKSPACE/Clock Bar.app.zip" "Clock Bar.app/"
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: ${{ github.ref }}
+        draft: true
+        prerelease: false
+
+    - name: Upload Release Asset
+      id: upload-release-asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./Clock Bar.app.zip
+        asset_name: Clock Bar.app.zip
+        asset_content_type: application/zip
